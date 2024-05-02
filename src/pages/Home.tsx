@@ -7,6 +7,7 @@ import { FaChevronRight, FaChevronLeft } from 'react-icons/fa';
 import Modal from 'react-modal';
 import { fetchCongViecByTen } from '../redux/reducers/congViecSlice';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 const NextArrow = ({
     className,
     style,
@@ -40,6 +41,7 @@ const PrevArrow = ({
 };
 
 const Home = () => {
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -103,6 +105,8 @@ const Home = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         dispatch(fetchCongViecByTen(searchTerm));
+
+        navigate('/job-list');
     };
 
     return (
