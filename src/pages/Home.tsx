@@ -6,8 +6,8 @@ import 'slick-carousel/slick/slick-theme.css';
 import { FaChevronRight, FaChevronLeft } from 'react-icons/fa';
 import Modal from 'react-modal';
 import { fetchCongViecByTen } from '../redux/reducers/congViecSlice';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useAppDispatch } from '../redux/hooks';
 const NextArrow = ({
     className,
     style,
@@ -42,7 +42,7 @@ const PrevArrow = ({
 
 const Home = () => {
     const navigate = useNavigate();
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const settings = {

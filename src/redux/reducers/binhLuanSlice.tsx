@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 // Define the initial state interface
 interface BinhLuanState {
@@ -20,7 +20,7 @@ const binhLuanSlice = createSlice({
 });
 
 // Export the actions
-export const {} = binhLuanSlice.actions;
+// export const { } = binhLuanSlice.actions;
 
 // Export the reducer
 export default binhLuanSlice.reducer;
