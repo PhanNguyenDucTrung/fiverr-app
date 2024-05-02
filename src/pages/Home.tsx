@@ -102,7 +102,7 @@ const Home = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        dispatch(fetchCongViecByTen(searchTerm) as unknown as UnknownAction);
+        dispatch(fetchCongViecByTen(searchTerm));
     };
 
     return (
