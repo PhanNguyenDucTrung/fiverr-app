@@ -1,11 +1,11 @@
-import React from 'react';
+// import React from 'react';
 import { Form, Input, Button, Checkbox, message } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import axios from 'axios';
 // import './Login.css'; // Import any custom styles
 
 const Login = () => {
-    const onFinish = async values => {
+    const onFinish = async (values: any) => {
         try {
             console.log(values);
             const response = await axios.post('http://localhost:3000/api/users/login', values);
