@@ -59,7 +59,7 @@ const CategoryList: React.FC = () => {
         {
             title: 'Actions',
             key: 'actions',
-            render: (text: string, record: Category) => (
+            render: (record: Category) => (
                 <>
                     <Button onClick={() => handleEdit(record)}>Edit</Button>
                     <Button danger onClick={() => handleDelete(record.id)}>

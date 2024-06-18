@@ -1,6 +1,6 @@
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { useAppSelector } from '../redux/hooks';
 import Footer from '../components/Footer';
-import { fetchCongViecTheoChiTietLoai } from '../redux/reducers/congViecSlice';
+// import { fetchCongViecTheoChiTietLoai } from '../redux/reducers/congViecSlice';
 
 const tags = [
     'Programming & Tech',
