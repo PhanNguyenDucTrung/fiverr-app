@@ -1,0 +1,175 @@
+.banner-section {
+    padding: 32px;
+}
+
+.hero-banner-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    max-height: 240px;
+    min-height: 240px;
+    background-color: rgb(37, 66, 0);
+    padding: 20px;
+}
+
+.hero-banner-wrapper .banner-content {
+    padding: 40px 20px;
+    color: #fff;
+    font-weight: 500;
+    font-size: 20px;
+    text-align: center;
+    width: 100%;
+}
+
+.hero-banner-wrapper .title {
+    font-size: 32px;
+    color: #fff;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.hero-banner-wrapper p {
+    margin-bottom: 20px;
+}
+
+.hero-banner-wrapper button {
+    background-color: transparent;
+    border: 1px solid #fff;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.hero-banner-wrapper button:hover {
+    background-color: #fff;
+    color: rgb(37, 66, 0);
+}
+
+// start job category danh sach job
+.categories-section {
+    margin: 20px 0;
+    padding: 20px;
+    // background-color: #f9f9f9;
+
+    h5 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .categories-menu {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .category-item {
+        flex: 1 1 calc(25% - 20px);
+        max-width: calc(25% - 20px);
+        box-sizing: border-box;
+
+        @media (max-width: 992px) {
+            flex: 1 1 calc(33.333% - 20px);
+        }
+
+        @media (max-width: 768px) {
+            flex: 1 1 calc(50% - 20px);
+        }
+
+        @media (max-width: 576px) {
+            flex: 1 1 100%;
+        }
+    }
+
+    .image-placeholder {
+        height: 150px;
+        background: linear-gradient(135deg, #f06, #f79);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        overflow: hidden;
+        font-size: 18px;
+        border-radius: 8px;
+
+        img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: 8px 8px 0 0;
+        }
+    }
+
+    h3 {
+        font-size: 20px;
+        margin: 10px 0;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 10px 0;
+    }
+
+    li {
+        margin-left: -12px;
+        margin-right: -12px;
+        padding: 8px 12px;
+        // width: 100%;
+        &:hover {
+            background-color: #f5f5f5;
+            border-radius: 8px;
+        }
+    }
+
+    a {
+        text-decoration: none;
+        color: #62646a;
+        font-size: 18px;
+    }
+}
+
+// end job category danh sach job
+
+// tag tag tag
+.related-tags {
+    margin: 20px 0;
+    text-align: center;
+    padding: 32px 32px 64px;
+}
+
+.related-tags h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.tag-button {
+    background-color: #f1f1f1;
+    color: #7a7878;
+    border: 1px solid #ccc;
+    border-radius: 18px;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.tag-button:hover {
+    // background-color: #0073e6;
+    // color: white;
+}

@@ -1,14 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
-import App from './App.tsx';
+import App from './App';
 import store from './redux/store';
-import './index.css';
+import { createBrowserHistory } from 'history';
+import { unstable_HistoryRouter as Router } from 'react-router-dom';
+
+export const history: any = createBrowserHistory();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-    <React.StrictMode>
+    <Router history={history}>
         <Provider store={store}>
             <App />
         </Provider>
-    </React.StrictMode>
+    </Router>
 );
