@@ -4,10 +4,15 @@ import axios from 'axios';
 
 const { Column } = Table;
 
+interface Category {
+    id: string;
+    name: string;
+}
+
 const Categories: React.FC = () => {
-    const [categories, setCategories] = useState([]);
+    const [categories, setCategories] = useState<Category[]>([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [editingCategory, setEditingCategory] = useState(null);
+    const [editingCategory, setEditingCategory] = useState<Category | null>(null);
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -25,13 +30,13 @@ const Categories: React.FC = () => {
         setIsModalVisible(true);
     };
 
-    const handleEditCategory = category => {
+    const handleEditCategory = (category: Category) => {
         setEditingCategory(category);
         form.setFieldsValue({ name: category.name });
         setIsModalVisible(true);
     };
 
-    const handleDeleteCategory = async categoryId => {
+    const handleDeleteCategory = async (categoryId: string) => {
         await axios.delete(`http://localhost:3000/api/categories/${categoryId}`);
         fetchCategories();
     };
@@ -58,13 +63,13 @@ const Categories: React.FC = () => {
             <Button type='primary' onClick={handleAddCategory}>
                 Thêm danh mục
             </Button>
-            <Table dataSource={categories} rowKey='id' style={{ marginTop: 20 }}>
+            <Table<Category> dataSource={categories} rowKey='id' style={{ marginTop: 20 }}>
                 <Column title='ID' dataIndex='id' key='id' />
                 <Column title='Tên danh mục' dataIndex='name' key='name' />
                 <Column
                     title='Hành động'
                     key='action'
-                    render={(text, record) => (
+                    render={(_, record: Category) => (
                         <Space size='middle'>
                             <Button onClick={() => handleEditCategory(record)}>Sửa</Button>
                             <Button danger onClick={() => handleDeleteCategory(record.id)}>
@@ -76,7 +81,7 @@ const Categories: React.FC = () => {
             </Table>
             <Modal
                 title={editingCategory ? 'Sửa danh mục' : 'Thêm danh mục'}
-                visible={isModalVisible}
+                open={isModalVisible}
                 onOk={handleOk}
                 onCancel={handleCancel}>
                 <Form form={form} layout='vertical'>

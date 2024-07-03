@@ -1,16 +1,16 @@
 import { NavLink } from 'react-router-dom';
 import { FormEvent, useEffect, useState } from 'react';
-import { useAppDispatch } from '../redux/hooks';
-import { useSearchParams } from 'react-router-dom';
+// import { useAppDispatch } from '../redux/hooks';
+// import { useSearchParams } from 'react-router-dom';
 // import { fetchCongViecByTen } from '../redux/reducers/congViecSlice';
 import { useNavigate } from 'react-router-dom';
 import CategoriesMenu from './CategoriesMenu';
 
 const Header = () => {
     const navigate = useNavigate();
-    const dispatch = useAppDispatch();
+    // const dispatch = useAppDispatch();
     const [searchTerm, setSearchTerm] = useState('');
-    const [searchParams, setSearchParams] = useSearchParams();
+    // const [searchParams, setSearchParams] = useSearchParams();
     const [scrollY, setScrollY] = useState(0);
     const [isHomePage, setIsHomePage] = useState(window.location.pathname === '/');
 
@@ -27,7 +27,7 @@ const Header = () => {
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        setSearchParams(searchTerm ? { search: searchTerm } : {});
+        // setSearchParams(searchTerm ? { search: searchTerm } : {});
         navigate('/result/?search=' + searchTerm);
         // dispatch(fetchCongViecByTen(searchParams.get('search') || ''));
     };

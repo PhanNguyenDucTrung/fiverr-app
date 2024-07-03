@@ -95,7 +95,8 @@ const JobCategory: React.FC = () => {
         }
     }, [categoryName, categoriesMenu, dispatch]);
 
-    const handleBeforeChange = (currentSlide, nextSlide) => {
+    const handleBeforeChange = (_currentSlide, nextSlide) => {
+        // console.log('currentSlide', currentSlide);
         const remainingSlides = totalSlides - nextSlide;
         setSlidesToScroll(remainingSlides < initialSlidesToShow ? remainingSlides : initialSlidesToShow);
     };

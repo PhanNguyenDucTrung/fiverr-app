@@ -7,7 +7,6 @@ import {
     MenuFoldOutlined,
     UserOutlined,
     VideoCameraOutlined,
-    UploadOutlined,
     AppstoreOutlined,
     FileDoneOutlined,
 } from '@ant-design/icons';

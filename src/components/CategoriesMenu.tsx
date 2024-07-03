@@ -4,6 +4,7 @@ import { fetchCategoriesMenu, fetchSubcategories } from '../redux/reducers/congV
 import { Menu, Popover } from 'antd';
 import { NavLink, useParams, useNavigate } from 'react-router-dom';
 import Masonry from 'react-masonry-css';
+import { ConfigProvider } from 'antd';
 
 type ChildCategory = {
     id: string;
@@ -110,11 +111,18 @@ const CategoriesMenu: React.FC<CategoriesMenuProps> = ({ className }) => {
 
     return (
         <div className={`categories-menu ${className}`}>
-            {/* Menu antd prop */}
-
-            <div className='max-width-container'>
-                <Menu mode='horizontal'>{renderMenuItems()}</Menu>
-            </div>
+            <ConfigProvider
+                theme={{
+                    components: {
+                        Popover: {
+                            zIndexPopup: 1030,
+                        },
+                    },
+                }}>
+                <div className='max-width-container'>
+                    <Menu mode='horizontal'>{renderMenuItems()}</Menu>
+                </div>
+            </ConfigProvider>
         </div>
     );
 };

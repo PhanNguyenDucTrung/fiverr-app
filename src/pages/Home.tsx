@@ -9,7 +9,7 @@ import Header from '../components/Header';
 import TestimonialSlider from '../components/TestimonialSlider';
 // import { fetchCongViecByTen } from '../redux/reducers/congViecSlice';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch } from '../redux/hooks';
+// import { useAppDispatch } from '../redux/hooks';
 const NextArrow = ({
     className,
     style,
@@ -44,7 +44,7 @@ const PrevArrow = ({
 
 const Home = () => {
     const navigate = useNavigate();
-    const dispatch = useAppDispatch();
+    // const dispatch = useAppDispatch();
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const settings = {
