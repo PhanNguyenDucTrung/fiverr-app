@@ -6,7 +6,8 @@ import { FaChevronRight, FaChevronLeft } from 'react-icons/fa';
 import Modal from 'react-modal';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
-import { fetchCongViecByTen } from '../redux/reducers/congViecSlice';
+import TestimonialSlider from '../components/TestimonialSlider';
+// import { fetchCongViecByTen } from '../redux/reducers/congViecSlice';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../redux/hooks';
 const NextArrow = ({
@@ -105,7 +106,7 @@ const Home = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        dispatch(fetchCongViecByTen(searchTerm));
+        // dispatch(fetchCongViecByTen(searchTerm));
         navigate(`/result/?search=${encodeURIComponent(searchTerm)}`);
     };
 
@@ -503,6 +504,10 @@ const Home = () => {
                         </Modal>
                     </div>
                 </div>
+            </div>
+
+            <div className='max-width-container'>
+                <TestimonialSlider />
             </div>
 
             <div className='main-categories max-width-container lohp-row'>

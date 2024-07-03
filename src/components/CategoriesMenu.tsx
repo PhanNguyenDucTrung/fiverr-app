@@ -1,22 +1,26 @@
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import {
-    fetchMenuLoaiCongViec,
-    fetchCongViecTheoChiTietLoai,
-    fetchChiTietLoaiCongViec,
-} from '../redux/reducers/congViecSlice';
-import { Menu } from 'antd';
-import type { MenuProps } from 'antd';
-import { NavLink } from 'react-router-dom';
-import { nanoid } from 'nanoid';
+import { fetchCategoriesMenu, fetchSubcategories } from '../redux/reducers/congViecSlice';
+import { Menu, Popover } from 'antd';
+import { NavLink, useParams, useNavigate } from 'react-router-dom';
+import Masonry from 'react-masonry-css';
+
+type ChildCategory = {
+    id: string;
+    name: string;
+};
+
+type Subcategory = {
+    id: string;
+    name: string;
+    childCategories: ChildCategory[];
+};
 
 type Category = {
-    dsChiTietLoai: [];
-    dsNhomChiTietLoai: [];
-    id: number;
-    tenLoaiCongViec: string;
+    id: string;
+    name: string;
+    subcategories: Subcategory[];
 };
-type MenuItem = Required<MenuProps>['items'][number];
 
 interface CategoriesMenuProps {
     className?: string;
@@ -24,57 +28,92 @@ interface CategoriesMenuProps {
 
 const CategoriesMenu: React.FC<CategoriesMenuProps> = ({ className }) => {
     const dispatch = useAppDispatch();
-    const menuLoaiCongViec: Category[] = useAppSelector(state => state.congViecReducer.menuLoaiCongViec);
-
-    const items: MenuItem[] = menuLoaiCongViec.map(category => ({
-        label: (
-            <NavLink
-                to={`/categories/${category.tenLoaiCongViec.toLowerCase().replace(/\s/g, '-')}`}
-                className='menu-item-link'
-                onClick={() => {
-                    dispatch(fetchChiTietLoaiCongViec(category.id));
-                }}>
-                {category.tenLoaiCongViec}
-            </NavLink>
-        ),
-        key: category.id.toString(),
-        children: (
-            category.dsNhomChiTietLoai as { tenNhom: string; dsChiTietLoai: { tenChiTiet: string; id: number }[] }[]
-        ).map(subcategory => ({
-            type: 'group',
-            label: <span style={{ color: '#404145', fontWeight: 500 }}>{subcategory.tenNhom}</span>,
-            children: subcategory.dsChiTietLoai.map((item: { tenChiTiet: string; id: number }) => {
-                return {
-                    label: (
-                        <NavLink
-                            to={`/categories/${category.tenLoaiCongViec
-                                .toLowerCase()
-                                .replace(/\s/g, '-')}/${subcategory.tenNhom.toLowerCase()}/${item.tenChiTiet
-                                .toLowerCase()
-                                .replace(/\s/g, '-')}/${item.id}`}
-                            className='submenu-item-link'
-                            style={{ color: '#62646a' }}
-                            onClick={() => {
-                                console.log(item.id);
-                                dispatch(fetchCongViecTheoChiTietLoai(item.id));
-                            }}>
-                            {item.tenChiTiet}
-                        </NavLink>
-                    ),
-                    key: nanoid(),
-                };
-            }),
-        })),
-    }));
+    const categoriesMenu = useAppSelector(state => state.congViecReducer.categoriesMenu) as Category[];
+    const { categoryName } = useParams<{ categoryName: string }>();
+    const navigate = useNavigate();
 
     useEffect(() => {
-        dispatch(fetchMenuLoaiCongViec());
+        dispatch(fetchCategoriesMenu());
     }, [dispatch]);
+
+    useEffect(() => {
+        if (categoryName) {
+            const category = categoriesMenu.find(
+                (c: Category) => c.name.toLowerCase().replace(/\s/g, '-') === categoryName
+            );
+            if (category) {
+                dispatch(fetchSubcategories(category.id));
+            } else {
+                // navigate('/404');
+            }
+        }
+    }, [categoryName, categoriesMenu, dispatch, navigate]);
+
+    const renderSubmenuContent = (subcategory: Subcategory) => (
+        <div>
+            <h3 style={{ marginBottom: '8px' }}>{subcategory.name}</h3>
+            {subcategory.childCategories.map(childCategory => (
+                <NavLink
+                    style={{ display: 'block', marginBottom: '8px' }}
+                    key={childCategory.id}
+                    to={`/categories/${categoryName?.toLowerCase().replace(/\s/g, '-')}/${subcategory.name
+                        ?.toLowerCase()
+                        .replace(/\s/g, '-')}/${childCategory.name.toLowerCase().replace(/\s/g, '-')}/${
+                        childCategory.id
+                    }`}
+                    className='submenu-item-link child-category-link'>
+                    {childCategory.name}
+                </NavLink>
+            ))}
+        </div>
+    );
+
+    const renderMenuItems = () =>
+        categoriesMenu.map(category => (
+            <Menu.Item key={category.id}>
+                {category.subcategories.length > 0 ? (
+                    <Popover
+                        // style={{ padding: '0', zIndex: '1000 !important' }}
+                        placement='bottom'
+                        trigger='hover'
+                        content={
+                            <Masonry
+                                breakpointCols={{ default: 4, 1100: 3, 700: 2, 500: 1 }}
+                                className='masonry-grid'
+                                columnClassName='masonry-grid_column'>
+                                {category.subcategories.map(subcategory => (
+                                    <div key={subcategory.id} className='masonry-item'>
+                                        {renderSubmenuContent(subcategory)}
+                                    </div>
+                                ))}
+                            </Masonry>
+                        }>
+                        <div>
+                            <NavLink
+                                to={`/categories/${category.name.toLowerCase().replace(/\s/g, '-')}`}
+                                className='menu-item-link'>
+                                {category.name}
+                            </NavLink>
+                        </div>
+                    </Popover>
+                ) : (
+                    <div>
+                        <NavLink
+                            to={`/categories/${category.name.toLowerCase().replace(/\s/g, '-')}`}
+                            className='menu-item-link'>
+                            {category.name}
+                        </NavLink>
+                    </div>
+                )}
+            </Menu.Item>
+        ));
 
     return (
         <div className={`categories-menu ${className}`}>
+            {/* Menu antd prop */}
+
             <div className='max-width-container'>
-                <Menu mode='horizontal' items={items} />
+                <Menu mode='horizontal'>{renderMenuItems()}</Menu>
             </div>
         </div>
     );

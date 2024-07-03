@@ -1,19 +1,20 @@
-// import React from 'react';
 import { Form, Input, Button, Checkbox, message } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-// import './Login.css'; // Import any custom styles
 
 const Login = () => {
+    const navigate = useNavigate();
     const onFinish = async (values: any) => {
         try {
             console.log(values);
-            const response = await axios.post('http://localhost:3000/api/users/login', values);
+            const response = await axios.post('http://localhost:3000/api/auth/login', values);
             console.log(response);
 
             if (response.status === 200) {
                 message.success('Login successful!');
                 localStorage.setItem('token', response.data.token);
+                navigate('/admin');
             }
             // console.log(response.data);
 

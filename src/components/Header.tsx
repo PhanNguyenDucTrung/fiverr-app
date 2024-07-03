@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom';
 import { FormEvent, useEffect, useState } from 'react';
 import { useAppDispatch } from '../redux/hooks';
 import { useSearchParams } from 'react-router-dom';
-import { fetchCongViecByTen } from '../redux/reducers/congViecSlice';
+// import { fetchCongViecByTen } from '../redux/reducers/congViecSlice';
 import { useNavigate } from 'react-router-dom';
 import CategoriesMenu from './CategoriesMenu';
 
@@ -29,12 +29,12 @@ const Header = () => {
         e.preventDefault();
         setSearchParams(searchTerm ? { search: searchTerm } : {});
         navigate('/result/?search=' + searchTerm);
-        dispatch(fetchCongViecByTen(searchParams.get('search') || ''));
+        // dispatch(fetchCongViecByTen(searchParams.get('search') || ''));
     };
 
     useEffect(() => {
         setIsHomePage(window.location.pathname === '/');
-    }, [window.location.pathname]);
+    }, []);
 
     return (
         <>
@@ -85,12 +85,12 @@ const Header = () => {
                                     </NavLink>
                                 </li>
                                 <li>
-                                    <NavLink to='/link2' className='nav-link'>
+                                    <NavLink to='/login' className='nav-link'>
                                         Sign in
                                     </NavLink>
                                 </li>
                                 <li>
-                                    <NavLink to='/link3' className='nav-link nav-link-join'>
+                                    <NavLink to='/register' className='nav-link nav-link-join'>
                                         Join
                                     </NavLink>
                                 </li>

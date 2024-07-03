@@ -34,7 +34,6 @@ const JobList = () => {
 
     return (
         <div>
-            {/* // HEADER HERE */}
             <div className='job-list-wrapper'>
                 <div className='max-width-container'>
                     <h1>Job List</h1>

@@ -51,6 +51,92 @@
     color: rgb(37, 66, 0);
 }
 
+// Most popular job category
+// JobCategory.scss
+
+.popular-tags-section {
+    margin-top: 20px;
+
+    .slick-slider {
+        margin-top: 20px;
+    }
+
+    // .slick-list {
+    //     padding-left: 12px;
+    //     margin-left: -12px;
+    // }
+
+    .slick-slide {
+        display: flex;
+        justify-content: center;
+        padding: 10px 10px;
+    }
+
+    .slick-slide:last-child {
+        padding-right: 0;
+    }
+
+    .tag-item-wrapper {
+        .tag-item {
+            background-color: white;
+            box-shadow: 0 0.14px 2.29266px rgba(0, 0, 0, 0.032), 0 0.37px 4.42626px rgba(0, 0, 0, 0.048),
+                0 3px 7px rgba(0, 0, 0, 0.09);
+            padding: 12px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+
+            .tag-image {
+                width: 50px;
+                height: auto;
+                margin-right: 10px;
+                border-radius: 5px;
+            }
+
+            .tag-name {
+                margin-right: 10px; /* Adjust margin as needed */
+                font-weight: 500;
+            }
+
+            .tag-arrow {
+                margin-left: auto; /* Push arrow to the right */
+            }
+        }
+
+        .tag-item:hover {
+            background-color: #f5f5f5;
+            color: #1dbf73;
+        }
+    }
+
+    .slick-prev,
+    .slick-next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 1;
+        font-size: 24px;
+        color: #666;
+        cursor: pointer;
+        background-color: transparent;
+        border: none;
+        outline: none;
+    }
+
+    .slick-prev {
+        left: -30px !important;
+    }
+
+    .slick-next {
+        right: -30px !important;
+    }
+
+    .slick-prev:hover,
+    .slick-next:hover {
+        color: #333;
+    }
+}
+
 // start job category danh sach job
 .categories-section {
     margin: 20px 0;
@@ -122,10 +208,19 @@
         margin-left: -12px;
         margin-right: -12px;
         padding: 8px 12px;
+        transition: all 0.3s;
+        i {
+            opacity: 0;
+            transition: all 0.3s;
+        }
         // width: 100%;
         &:hover {
             background-color: #f5f5f5;
             border-radius: 8px;
+        }
+
+        &:hover i {
+            opacity: 1;
         }
     }
 
