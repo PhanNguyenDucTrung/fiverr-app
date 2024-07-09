@@ -1,4 +1,3 @@
-import React from 'react';
 import { Card, Avatar, Rate, Divider, Row, Col, Typography, Badge, Button, Tabs } from 'antd';
 import { UserOutlined, TrophyOutlined } from '@ant-design/icons';
 
