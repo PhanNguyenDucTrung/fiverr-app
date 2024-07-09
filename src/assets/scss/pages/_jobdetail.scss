@@ -1,0 +1,46 @@
+.job-detail {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+
+    .left-content {
+        flex: 2;
+    }
+
+    .right-content {
+        flex: 1;
+        position: relative; /* Ensure the container's position is relative for sticky to work */
+
+        .pricing-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pricing-title h4 {
+            font-weight: 600;
+            margin-bottom: 0; /* Remove default margin */
+        }
+
+        .pricing-price {
+            font-weight: 600;
+            font-size: 1.5em;
+        }
+
+        .pricing-button {
+            margin-top: 10px;
+            font-weight: 600;
+        }
+    }
+
+    .sticky-card {
+        position: sticky;
+        top: 20px; /* Adjust the top offset as needed */
+        z-index: 1; /* Ensure the sticky element stays above other content */
+        background-color: #fff; /* Ensure background remains visible */
+        padding: 16px; /* Add padding for spacing */
+        border: 1px solid #f0f0f0; /* Optional: Add border for styling */
+        border-radius: 4px; /* Optional: Add border radius for rounded corners */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for depth */
+    }
+}

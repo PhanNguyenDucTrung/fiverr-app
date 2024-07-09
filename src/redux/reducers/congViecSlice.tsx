@@ -1,14 +1,18 @@
+// congViecSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axiosInstance from '../../utils/api';
 
+// Thunk to fetch categories menu
 export const fetchCategoriesMenu = createAsyncThunk('congViec/fetchCategoriesMenu', async () => {
-    const response = await axios.get('http://localhost:3000/api/categories');
+    const response = await axiosInstance.get('/categories');
+
     return response.data;
 });
 
+// Thunk to fetch subcategories based on categoryId
 export const fetchSubcategories = createAsyncThunk('congViec/fetchSubcategories', async (categoryId: string) => {
-    const response = await axios.get(`http://localhost:3000/api/categories/${categoryId}`);
-    console.log('Reach', response.data);
+    const response = await axiosInstance.get(`/categories/${categoryId}`);
+
     return response.data;
 });
 

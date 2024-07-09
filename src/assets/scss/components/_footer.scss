@@ -127,16 +127,15 @@
 .footer-column ul {
     padding: 0;
     list-style: none;
+    font-weight: 500;
+    li a {
+        color: #74767e;
+        text-decoration: none;
+    }
 }
 
 .footer-column ul li:not(:last-child) {
     padding-bottom: 16px;
-    font-weight: 500;
-}
-
-.footer-column ul li a {
-    color: #74767e;
-    text-decoration: none;
 }
 
 .footer-column h6 {

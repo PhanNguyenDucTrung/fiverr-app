@@ -4,14 +4,18 @@
 @import './pages/jobcategory';
 @import './pages/joblist';
 @import './pages/login';
+@import './pages/jobdetail';
 
 // smooth scroll
 html {
-    scroll-behavior: smooth;
+    // scroll-behavior: smooth;
+    overflow-y: 0;
+    width: 100%;
 }
 
 /* Global css*/
 body {
+    width: 100% !important  ;
     font-family: 'Montserrat', sans-serif;
 }
 
@@ -66,9 +70,6 @@ h4 {
         .nav-link {
             color: #fff;
             transition: color 0.5s;
-            &:hover {
-                color: #1dbf73;
-            }
         }
 
         .nav-link-join {
@@ -94,6 +95,9 @@ h4 {
 
         .nav-link {
             color: #404145;
+            &:hover {
+                color: #1dbf73;
+            }
         }
 
         .nav-link-join {
@@ -120,6 +124,9 @@ h4 {
 
         .nav-link {
             color: #404145;
+            &:hover {
+                color: #1dbf73;
+            }
         }
 
         .nav-link-join {
@@ -428,64 +435,6 @@ input[type='text'] {
     content: '' !important;
 }
 
-/* Selling Proposition */
-.selling-proposition-wrapper {
-    background-color: #f2fff8;
-}
-.selling-content {
-    display: flex;
-    flex-wrap: wrap;
-    position: relative;
-}
-.selling-proposition .selling-text {
-    padding-right: 11%;
-    max-width: 46.6666666667%;
-}
-
-.selling-proposition .selling-text li {
-    padding-bottom: 24px;
-}
-
-.selling-video {
-    flex-basis: 53.3333333333%;
-    max-width: 53.3333333333%;
-}
-
-.heading {
-    display: flex;
-    align-items: center;
-    font-weight: 700;
-    font-size: 18px;
-    margin-bottom: 8px;
-
-    .check-icon {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 24px;
-        height: 24px;
-        fill: #7a7d85;
-        margin-right: 10px;
-    }
-
-    svg {
-        display: block;
-    }
-}
-
-.check-icon {
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    fill: #7a7d85;
-    margin-right: 10px;
-}
-
-.check-icon svg {
-    width: 100%;
-    height: 100%;
-}
-
 /* main categories */
 .main-categories h2 {
     margin-bottom: 40px;
@@ -574,25 +523,26 @@ input[type='text'] {
 }
 
 /* Categories Menu Styles */
-
 .categories-menu {
     font-weight: 500;
     font-size: 16px !important;
     z-index: 9999;
+
     width: 100%;
 
-    .ant-menu-item:hover:after {
-        border-color: #1dbf73 !important;
+    .ant-menu-item::after {
         border-bottom-width: 4px !important;
-        height: 2px;
+    }
+
+    .ant-menu-item:focus::after {
+        border-color: #1dbf73 !important;
+    }
+
+    .ant-menu-item:hover::after {
+        border-color: #1dbf73 !important;
     }
     .ant-menu-item-selected::after {
         border-color: #1dbf73 !important;
-        border-bottom-width: 4px !important;
-        height: 2px;
-    }
-    a.menu-item-link.active {
-        color: initial;
     }
 }
 
@@ -617,19 +567,20 @@ input[type='text'] {
 
 .categories-menu-relative {
     position: relative;
+    background-color: #fff;
 }
 
 .subcategory-title {
-    color: #62646a;
+    color: #404145;
     font-size: 16px;
     margin-bottom: 1rem;
+    font-weight: 600;
 }
 
 // Categories menu (bố cục masonry)
 .masonry-grid {
     display: flex;
     width: 100%;
-    // gap: 16px; /* khoảng cách giữa các cột */
 }
 
 .masonry-grid_column {
@@ -640,14 +591,13 @@ input[type='text'] {
 .masonry-item {
     min-width: 250px;
     max-width: 330px;
-    // background-color: #f0f0f0;
-    // border: 1px solid #ddd;
     padding: 16px;
     border-radius: 8px;
-    word-wrap: break-word; /* Đảm bảo rằng từ dài sẽ được bọc xuống dòng */
-    white-space: nowrap; /* Ngăn chữ xuống dòng */
+    word-wrap: break-word;
+    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; /* Thêm dấu ba chấm khi chữ bị cắt */
+    text-overflow: ellipsis;
+    font-weight: 600;
 }
 
 // CSS TRANG THUOC ADMIN TEMPLATE

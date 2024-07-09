@@ -10,7 +10,7 @@ import {
     AppstoreOutlined,
     FileDoneOutlined,
 } from '@ant-design/icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const { Header, Sider, Content } = Layout;
 
@@ -18,16 +18,18 @@ const AdminTemplate: React.FC = () => {
     const role = useAppSelector(state => state.authReducer.role);
     console.log(role);
     const [collapsed, setCollapsed] = useState(false);
-
+    const navigate = useNavigate();
     const toggle = () => {
         setCollapsed(!collapsed);
     };
 
-    if (role !== 'admin') {
-        console.log('redirecting');
-        const navigate = useNavigate();
-        navigate('/');
-    }
+    useEffect(() => {
+        if (role !== 'admin') {
+            console.log('redirecting');
+
+            navigate('/');
+        }
+    }, [role]);
 
     return (
         <Layout style={{ minHeight: '100vh' }}>
@@ -39,13 +41,10 @@ const AdminTemplate: React.FC = () => {
                         background: 'rgba(255, 255, 255, 0.2)',
                         margin: '16px',
                         color: 'white',
-                        // textAlign: 'center',
                         fontSize: '20px',
                         padding: '0 14px',
                         lineHeight: '32px',
-                    }}>
-                    {/* Dashboard */}
-                </div>
+                    }}></div>
                 <Menu theme='dark' mode='inline' defaultSelectedKeys={['1']}>
                     <Menu.Item key='1' icon={<UserOutlined />}>
                         <NavLink to='/admin/users'>Quản lý người dùng</NavLink>

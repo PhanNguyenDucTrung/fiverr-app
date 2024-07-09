@@ -77,6 +77,16 @@
     width: 100%;
 }
 
+.listing-container {
+    .ant-skeleton {
+        width: 100%;
+        .ant-skeleton-image {
+            width: 100%;
+            height: 200px;
+        }
+    }
+}
+
 // big screen > 1160px
 .listing-container.grid-view {
     margin-top: 16px;

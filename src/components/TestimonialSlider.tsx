@@ -117,10 +117,14 @@ const TestimonialSlider = () => {
                                 </button>
                             </div>
                             <div className='text-content'>
-                                <h5>
-                                    {item.name}, {item.title}
-                                </h5>
-                                <img src={item.companyLogo} alt='Company Logo' className='company-logo' />
+                                <div className='info'>
+                                    <h5>
+                                        {item.name}, {item.title}
+                                    </h5>
+                                    <div className='logo-wrapper'>
+                                        <img src={item.companyLogo} alt='Company Logo' className='company-logo' />
+                                    </div>
+                                </div>
                                 <p>
                                     "<em>{item.testimonial}</em>"
                                 </p>

@@ -18,8 +18,7 @@ const rootReducer = combineReducers({
     loaiCongViecReducer,
     nguoiDungReducer,
     skillReducer,
-    thueCongViec
-    
+    thueCongViec,
 });
 
 export default rootReducer;

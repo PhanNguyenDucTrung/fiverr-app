@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { useParams } from 'react-router-dom';
 import Slider from 'react-slick';
+import { Spin } from 'antd';
 import { fetchSubcategories } from '../redux/reducers/congViecSlice';
+import Modal from 'react-modal';
 
 type Category = {
     id: string;
@@ -44,17 +46,72 @@ const tags = [
 ];
 
 const popularTags = [
-    { id: '1', name: 'SEO', imageUrl: 'https://via.placeholder.com/50' },
-    { id: '2', name: 'Content Marketing', imageUrl: 'https://via.placeholder.com/50' },
-    { id: '3', name: 'Social Media Management', imageUrl: 'https://via.placeholder.com/50' },
-    { id: '4', name: 'Email Marketing', imageUrl: 'https://via.placeholder.com/50' },
-    { id: '5', name: 'PPC Advertising', imageUrl: 'https://via.placeholder.com/50' },
-    { id: '6', name: 'Affiliate Marketing', imageUrl: 'https://via.placeholder.com/50' },
-    { id: '6', name: 'Affiliate Marketing', imageUrl: 'https://via.placeholder.com/50' },
-    { id: '6', name: 'Affiliate Marketing', imageUrl: 'https://via.placeholder.com/50' },
-    { id: '6', name: 'Affiliate Marketing', imageUrl: 'https://via.placeholder.com/50' },
-    { id: '6', name: 'Affiliate Marketing', imageUrl: 'https://via.placeholder.com/50' },
-    { id: '6', name: 'Affiliate Marketing', imageUrl: 'https://via.placeholder.com/50' },
+    {
+        id: '1',
+        name: 'SEO',
+        imageUrl:
+            'https://static.vecteezy.com/system/resources/thumbnails/013/760/485/small_2x/abstract-connection-logo-illustration-in-trendy-and-minimal-style-png.png',
+    },
+    {
+        id: '2',
+        name: 'Logo Design',
+        imageUrl:
+            'https://static.vecteezy.com/system/resources/thumbnails/013/760/485/small_2x/abstract-connection-logo-illustration-in-trendy-and-minimal-style-png.png',
+    },
+    {
+        id: '3',
+        name: 'Social Media Management',
+        imageUrl:
+            'https://static.vecteezy.com/system/resources/thumbnails/013/760/485/small_2x/abstract-connection-logo-illustration-in-trendy-and-minimal-style-png.png',
+    },
+    {
+        id: '4',
+        name: 'Email Marketing',
+        imageUrl:
+            'https://static.vecteezy.com/system/resources/thumbnails/013/760/485/small_2x/abstract-connection-logo-illustration-in-trendy-and-minimal-style-png.png',
+    },
+    {
+        id: '5',
+        name: 'PPC Advertising',
+        imageUrl:
+            'https://static.vecteezy.com/system/resources/thumbnails/013/760/485/small_2x/abstract-connection-logo-illustration-in-trendy-and-minimal-style-png.png',
+    },
+    {
+        id: '6',
+        name: 'Affiliate Marketing',
+        imageUrl:
+            'https://static.vecteezy.com/system/resources/thumbnails/013/760/485/small_2x/abstract-connection-logo-illustration-in-trendy-and-minimal-style-png.png',
+    },
+    {
+        id: '6',
+        name: 'Affiliate Marketing',
+        imageUrl:
+            'https://static.vecteezy.com/system/resources/thumbnails/013/760/485/small_2x/abstract-connection-logo-illustration-in-trendy-and-minimal-style-png.png',
+    },
+    {
+        id: '6',
+        name: 'Affiliate Marketing',
+        imageUrl:
+            'https://static.vecteezy.com/system/resources/thumbnails/013/760/485/small_2x/abstract-connection-logo-illustration-in-trendy-and-minimal-style-png.png',
+    },
+    {
+        id: '6',
+        name: 'Affiliate Marketing',
+        imageUrl:
+            'https://static.vecteezy.com/system/resources/thumbnails/013/760/485/small_2x/abstract-connection-logo-illustration-in-trendy-and-minimal-style-png.png',
+    },
+    {
+        id: '6',
+        name: 'Affiliate Marketing',
+        imageUrl:
+            'https://static.vecteezy.com/system/resources/thumbnails/013/760/485/small_2x/abstract-connection-logo-illustration-in-trendy-and-minimal-style-png.png',
+    },
+    {
+        id: '6',
+        name: 'Affiliate Marketing',
+        imageUrl:
+            'https://static.vecteezy.com/system/resources/thumbnails/013/760/485/small_2x/abstract-connection-logo-illustration-in-trendy-and-minimal-style-png.png',
+    },
 ];
 
 const CustomNextArrow: React.FC<any> = ({ onClick }) => (
@@ -75,10 +132,11 @@ const JobCategory: React.FC = () => {
     const [slidesToScroll, setSlidesToScroll] = useState(1);
     const categoriesMenu = useAppSelector(state => state.congViecReducer.categoriesMenu) as Category[];
     const categoryDetails = useAppSelector(state => state.congViecReducer.categoryDetails) as CategoryDetails | null;
-
+    console.log('categoryDetails', categoryDetails);
     const totalSlides = popularTags.length;
     const initialSlidesToShow = 5;
     const initialSlidesToScroll = totalSlides < initialSlidesToShow ? 1 : initialSlidesToShow;
+    const [modalIsOpen, setModalIsOpen] = useState(false);
 
     useEffect(() => {
         setSlidesToScroll(initialSlidesToScroll);
@@ -102,7 +160,7 @@ const JobCategory: React.FC = () => {
     };
 
     if (!categoryDetails) {
-        return <div>Loading...</div>;
+        return <Spin />;
     }
 
     const { name, subcategories } = categoryDetails;
@@ -150,11 +208,56 @@ const JobCategory: React.FC = () => {
                         <div className='banner-content'>
                             <h1 className='title'>{name}</h1>
                             <p>Designs to make you stand out.</p>
-                            <button>
+                            <button onClick={() => setModalIsOpen(true)}>
                                 <i className='fas fa-play'></i> How Fiverr Works
                             </button>
                         </div>
                     </div>
+                    <Modal
+                        appElement={document.getElementById('root') as HTMLElement}
+                        isOpen={modalIsOpen}
+                        onRequestClose={() => setModalIsOpen(false)}
+                        style={{
+                            content: {
+                                top: '50%',
+                                left: '50%',
+                                right: 'auto',
+                                bottom: 'auto',
+                                marginRight: '-50%',
+                                transform: 'translate(-50%, -50%)',
+                                backgroundColor: 'transparent',
+                                border: 'none',
+                                borderRadius: '4px',
+                                padding: '0',
+                                margin: '0',
+                                width: '100%',
+                                maxWidth: '900px',
+                                height: '455px',
+                                maxHeight: '90vh',
+                                overflow: 'hidden',
+                                zIndex: 9999,
+                            },
+                            overlay: {
+                                zIndex: 9999,
+                                backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                            },
+                        }}>
+                        <video
+                            width='100%'
+                            style={{
+                                margin: '0',
+                                padding: '0',
+                                height: '100%',
+                                objectFit: 'cover',
+                            }}
+                            autoPlay
+                            controls>
+                            <source
+                                src='https://fiverr-res.cloudinary.com/video/upload/t_fiverr_hd/vmvv3czyk2ifedefkau7'
+                                type='video/mp4'></source>
+                        </video>
+                        {/* <button onClick={() => setModalIsOpen(false)}>Close</button> */}
+                    </Modal>
                 </div>
             </div>
 

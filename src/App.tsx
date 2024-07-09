@@ -1,5 +1,8 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import './assets/scss/main.scss';
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from './redux/hooks';
+import { clearToken } from './redux/reducers/authSlice';
+
 import MainTemplate from './templates/MainTemplate';
 import AdminTemplate from './templates/AdminTemplate';
 import Home from './pages/Home';
@@ -11,14 +14,28 @@ import JobDetail from './pages/JobDetail';
 import JobList from './pages/JobList';
 import PasswordReset from './components/PasswordReset';
 import EmailVerification from './components/EmailVerification';
-import Dashboard from './pages/DashBoard';
 
 import Users from './pages/Users';
-import Jobs from './pages/Jobs';
+import Services from './pages/Services';
 import Orders from './pages/Orders';
 import Categories from './pages/Categories';
-
+import './assets/scss/main.scss';
 function App() {
+    const dispatch = useAppDispatch();
+    const expiresAt = useAppSelector(state => state.authReducer.expiresAt);
+    useEffect(() => {
+        const checkTokenExpiration = () => {
+            if (expiresAt && Date.now() >= expiresAt) {
+                dispatch(clearToken());
+            }
+        };
+
+        checkTokenExpiration();
+
+        const intervalId = setInterval(checkTokenExpiration, 1000 * 60);
+
+        return () => clearInterval(intervalId);
+    }, [dispatch, expiresAt]);
     return (
         <Routes>
             <Route path='' element={<Home />} />
@@ -28,8 +45,8 @@ function App() {
                 <Route path='/login' element={<Login />} />
                 <Route path='/profile' element={<Profile />} />
                 <Route path='/job-category' element={<JobCategory />} />
-                <Route path='/job-detail' element={<JobDetail />} />
                 <Route path='/result' element={<JobList />} />
+                <Route path='/job-detail' element={<JobDetail />} />
 
                 <Route path='/categories/:categoryName' element={<JobCategory />} />
                 <Route path='/categories/:tenLoaiCongViec/:tenNhom/:tenChiTiet/:id' element={<JobList />} />
@@ -39,12 +56,10 @@ function App() {
 
             <Route path='/admin' element={<AdminTemplate />}>
                 <Route path='users' element={<Users />} />
-                <Route path='jobs' element={<Jobs />} />
+                <Route path='jobs' element={<Services />} />
                 <Route path='orders' element={<Orders />} />
                 <Route path='categories' element={<Categories />} />
             </Route>
-
-            <Route path='/dash-board' element={<Dashboard />}></Route>
         </Routes>
     );
 }

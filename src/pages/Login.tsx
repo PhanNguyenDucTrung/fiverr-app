@@ -1,24 +1,30 @@
 import { Form, Input, Button, Checkbox, message } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { setToken } from '../redux/reducers/authSlice';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import axiosInstance from '../utils/api';
+import { useEffect } from 'react';
 
 const Login = () => {
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
+    const role = useAppSelector(state => state.authReducer.role);
+
+    useEffect(() => {
+        if (role === 'admin') {
+            navigate('/admin/users');
+        }
+    }, [role, navigate]);
+
     const onFinish = async (values: any) => {
         try {
-            console.log(values);
-            const response = await axios.post('http://localhost:3000/api/auth/login', values);
-            console.log(response);
+            const response = await axiosInstance.post('/auth/login', values);
 
             if (response.status === 200) {
                 message.success('Login successful!');
-                localStorage.setItem('token', response.data.token);
-                navigate('/admin');
+                dispatch(setToken(response.data.token));
             }
-            // console.log(response.data);
-
-            // Handle successful login, e.g., redirect to another page
         } catch (error) {
             message.error('Login failed. Please check your credentials.');
         }
@@ -41,12 +47,10 @@ const Login = () => {
                     <Form.Item name='remember' valuePropName='checked' noStyle>
                         <Checkbox>Remember me</Checkbox>
                     </Form.Item>
-
                     <a className='login-form-forgot' href=''>
                         Forgot password
                     </a>
                 </Form.Item>
-
                 <Form.Item>
                     <Button type='primary' htmlType='submit' className='login-form-button'>
                         Log in

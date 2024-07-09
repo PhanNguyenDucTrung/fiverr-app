@@ -29,7 +29,8 @@ interface CategoriesMenuProps {
 
 const CategoriesMenu: React.FC<CategoriesMenuProps> = ({ className }) => {
     const dispatch = useAppDispatch();
-    const categoriesMenu = useAppSelector(state => state.congViecReducer.categoriesMenu) as Category[];
+    const categoriesMenu = useAppSelector(state => state.congViecReducer?.categoriesMenu) as Category[];
+    console.log(categoriesMenu);
     const { categoryName } = useParams<{ categoryName: string }>();
     const navigate = useNavigate();
 
@@ -50,7 +51,7 @@ const CategoriesMenu: React.FC<CategoriesMenuProps> = ({ className }) => {
         }
     }, [categoryName, categoriesMenu, dispatch, navigate]);
 
-    const renderSubmenuContent = (subcategory: Subcategory) => (
+    const renderSubmenuContent = (subcategory: Subcategory, categoryName) => (
         <div>
             <h3 style={{ marginBottom: '8px' }}>{subcategory.name}</h3>
             {subcategory.childCategories.map(childCategory => (
@@ -74,7 +75,6 @@ const CategoriesMenu: React.FC<CategoriesMenuProps> = ({ className }) => {
             <Menu.Item key={category.id}>
                 {category.subcategories.length > 0 ? (
                     <Popover
-                        // style={{ padding: '0', zIndex: '1000 !important' }}
                         placement='bottom'
                         trigger='hover'
                         content={
@@ -84,7 +84,7 @@ const CategoriesMenu: React.FC<CategoriesMenuProps> = ({ className }) => {
                                 columnClassName='masonry-grid_column'>
                                 {category.subcategories.map(subcategory => (
                                     <div key={subcategory.id} className='masonry-item'>
-                                        {renderSubmenuContent(subcategory)}
+                                        {renderSubmenuContent(subcategory, category.name)}
                                     </div>
                                 ))}
                             </Masonry>
@@ -116,6 +116,12 @@ const CategoriesMenu: React.FC<CategoriesMenuProps> = ({ className }) => {
                     components: {
                         Popover: {
                             zIndexPopup: 1030,
+                            sizePopupArrow: 0,
+                        },
+                        Menu: {
+                            itemColor: '#62646A',
+                            horizontalItemHoverColor: '#74767E',
+                            horizontalItemSelectedColor: '#74767E',
                         },
                     },
                 }}>
