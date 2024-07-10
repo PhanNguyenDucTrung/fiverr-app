@@ -12,7 +12,6 @@ export const fetchCategoriesMenu = createAsyncThunk('congViec/fetchCategoriesMen
 // Thunk to fetch subcategories based on categoryId
 export const fetchSubcategories = createAsyncThunk('congViec/fetchSubcategories', async (categoryId: string) => {
     const response = await axiosInstance.get(`/categories/${categoryId}`);
-
     return response.data;
 });
 

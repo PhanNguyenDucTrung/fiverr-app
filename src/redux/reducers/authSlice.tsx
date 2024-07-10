@@ -1,17 +1,20 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { jwtDecode } from 'jwt-decode';
 import { Middleware } from 'redux';
+import axiosInstance from '../../utils/api';
 
 interface AuthState {
     token: string | null;
     role: string | null;
     expiresAt: number | null;
+    profile: any | null;
 }
 
 const initialState: AuthState = {
     token: localStorage.getItem('token'),
     role: null,
     expiresAt: null,
+    profile: null,
 };
 
 if (initialState.token) {
@@ -38,6 +41,23 @@ const authSlice = createSlice({
             localStorage.removeItem('token');
         },
     },
+    extraReducers: builder => {
+        builder.addCase(fetchUserProfile.fulfilled, (state, action) => {
+            state.profile = action.payload;
+        });
+    },
+});
+
+export const fetchUserProfile = createAsyncThunk('auth/fetchUserProfile', async () => {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('No token found');
+
+    const response = await axiosInstance.get('/users/profile', {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    return response.data;
 });
 
 // Middleware to check token expiration

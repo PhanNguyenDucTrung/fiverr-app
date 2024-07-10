@@ -1,16 +1,17 @@
 import { NavLink } from 'react-router-dom';
 import { FormEvent, useEffect, useState } from 'react';
-// import { useAppDispatch } from '../redux/hooks';
-// import { useSearchParams } from 'react-router-dom';
-// import { fetchCongViecByTen } from '../redux/reducers/congViecSlice';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { clearToken, fetchUserProfile } from '../redux/reducers/authSlice';
+import { Avatar, Button } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import CategoriesMenu from './CategoriesMenu';
 
 const Header = () => {
     const navigate = useNavigate();
-    // const dispatch = useAppDispatch();
+    const dispatch = useAppDispatch();
     const [searchTerm, setSearchTerm] = useState('');
-    // const [searchParams, setSearchParams] = useSearchParams();
+    const { token, profile } = useAppSelector(state => state.authReducer);
     const [scrollY, setScrollY] = useState(0);
     const [isHomePage, setIsHomePage] = useState(window.location.pathname === '/');
 
@@ -27,14 +28,19 @@ const Header = () => {
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        // setSearchParams(searchTerm ? { search: searchTerm } : {});
         navigate('/result/?search=' + searchTerm);
-        // dispatch(fetchCongViecByTen(searchParams.get('search') || ''));
+    };
+
+    const handleLogout = () => {
+        dispatch(clearToken());
     };
 
     useEffect(() => {
         setIsHomePage(window.location.pathname === '/');
-    }, []);
+        if (token) {
+            dispatch(fetchUserProfile());
+        }
+    }, [token, dispatch]);
 
     return (
         <>
@@ -74,26 +80,39 @@ const Header = () => {
 
                         <nav>
                             <ul className='nav-links'>
-                                <li>
-                                    <button className='nav-link nav-link-lang'>
-                                        <i className='fa fa-globe'></i> English
-                                    </button>
-                                </li>
-                                <li>
-                                    <NavLink to='/link1' className='nav-link'>
-                                        Become a Seller
-                                    </NavLink>
-                                </li>
-                                <li>
-                                    <NavLink to='/login' className='nav-link'>
-                                        Sign in
-                                    </NavLink>
-                                </li>
-                                <li>
-                                    <NavLink to='/register' className='nav-link nav-link-join'>
-                                        Join
-                                    </NavLink>
-                                </li>
+                                {token ? (
+                                    <>
+                                        <li>
+                                            <Avatar src={profile?.avatar} icon={<UserOutlined />} />
+                                        </li>
+                                        <li>
+                                            <Button onClick={handleLogout}>Logout</Button>
+                                        </li>
+                                    </>
+                                ) : (
+                                    <>
+                                        <li>
+                                            <button className='nav-link nav-link-lang'>
+                                                <i className='fa fa-globe'></i> English
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <NavLink to='/link1' className='nav-link'>
+                                                Become a Seller
+                                            </NavLink>
+                                        </li>
+                                        <li>
+                                            <NavLink to='/login' className='nav-link'>
+                                                Sign in
+                                            </NavLink>
+                                        </li>
+                                        <li>
+                                            <NavLink to='/register' className='nav-link nav-link-join'>
+                                                Join
+                                            </NavLink>
+                                        </li>
+                                    </>
+                                )}
                             </ul>
                         </nav>
                     </header>
