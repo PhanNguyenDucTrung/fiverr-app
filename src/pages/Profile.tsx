@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Avatar, Typography, Divider, Skeleton, Form, Input, Button, Modal, notification } from 'antd';
 import { UserOutlined, EditOutlined } from '@ant-design/icons';
-import { useAppSelector } from '../redux/hooks';
+import { useAppSelector, useAppDispatch } from '../redux/hooks';
 import axiosInstance from '../utils/api';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
+import { fetchUserProfile } from '../redux/reducers/authSlice';
 
 const { Title, Text } = Typography;
 
 const Profile: React.FC = () => {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
+    const dispatch = useAppDispatch();
     const [loading, setLoading] = useState(true);
     const [profileData, setProfileData] = useState<any>(null);
     const [passwordData, setPasswordData] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
@@ -22,7 +24,7 @@ const Profile: React.FC = () => {
 
     useEffect(() => {
         if (!profile) {
-            navigate('/login');
+            dispatch(fetchUserProfile());
         }
         const fetchProfileData = () => {
             const fakeProfile = {
@@ -31,7 +33,6 @@ const Profile: React.FC = () => {
                 email: 'john.doe@example.com',
                 address: 'New York, USA',
                 phone: '(123) 456-7890',
-
                 ...profile,
             };
             setProfileData(fakeProfile);

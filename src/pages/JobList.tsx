@@ -1,8 +1,13 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Filter from '../components/Filter';
 import axiosInstance from '../utils/api';
-import { Skeleton } from 'antd';
+import { Skeleton, Tooltip, Modal } from 'antd';
+import { HeartOutlined, HeartFilled } from '@ant-design/icons';
+import LazyLoad from 'react-lazyload';
+import { useAppSelector, useAppDispatch } from '../redux/hooks';
+import { fetchUserProfile } from '../redux/reducers/authSlice';
+import Login from './Login';
 
 interface Service {
     id: string;
@@ -12,40 +17,93 @@ interface Service {
     description: string;
     price: number;
     rating: number;
+    likes: number;
 }
 
-const JobList = () => {
+const JobList: React.FC = () => {
     const location = useLocation();
+    const dispatch = useAppDispatch();
+    const [likedServices, setLikedServices] = useState<string[]>([]);
     const queryParams = new URLSearchParams(location.search);
     const searchTerm = queryParams.get('search');
-    const [services, setServices] = useState([]);
+    const [services, setServices] = useState<Service[]>([]);
     const [loading, setLoading] = useState(true);
 
+    const [isLoginModalVisible, setIsLoginModalVisible] = useState(false);
+    const token = useAppSelector(state => state.authReducer.token);
+    const profile = useAppSelector(state => state.authReducer.profile);
+
+    const fetchServicesByCategory = async (categoryId: string) => {
+        try {
+            const response = await axiosInstance.get<Service[]>(`/services/childcategory/${categoryId}`);
+            console.log('Services:', response.data);
+            setServices(response.data);
+        } catch (error) {
+            console.error('Error fetching services:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchServicesByCategory = async categoryId => {
-            try {
-                const response = await axiosInstance.get(`/services/childcategory/${categoryId}`);
-                console.log('Services:', response.data);
-                setServices(response.data);
-            } catch (error) {
-                console.error('Error fetching services:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
+        if (!profile && token) {
+            dispatch(fetchUserProfile());
+        } else {
+            setLikedServices(profile?.likedServices || []);
+        }
 
         const pathSegments = location.pathname.split('/');
         const childCategoryId = pathSegments[pathSegments.length - 1];
 
         fetchServicesByCategory(childCategoryId);
-    }, [location.pathname]);
+    }, [location.pathname, profile, token]);
+
+    const handleLike = async (serviceId: string) => {
+        if (!token) {
+            setIsLoginModalVisible(true);
+            return;
+        }
+
+        try {
+            await axiosInstance.post(`/services/${serviceId}/like`);
+            setLikedServices(prevLikedServices => [...prevLikedServices, serviceId]);
+            setServices(prevServices =>
+                prevServices.map(service =>
+                    service.id === serviceId ? { ...service, likes: service.likes + 1 } : service
+                )
+            );
+        } catch (error) {
+            console.error('Error liking service:', error);
+        }
+    };
+
+    const handleUnlike = async (serviceId: string) => {
+        if (!token) {
+            setIsLoginModalVisible(true);
+            return;
+        }
+
+        try {
+            await axiosInstance.post(`/services/${serviceId}/unlike`);
+            setLikedServices(prevLikedServices => prevLikedServices.filter(id => id !== serviceId));
+            setServices(prevServices =>
+                prevServices.map(service =>
+                    service.id === serviceId ? { ...service, likes: service.likes - 1 } : service
+                )
+            );
+        } catch (error) {
+            console.error('Error unliking service:', error);
+        }
+    };
+
+    const isLiked = (serviceId: string) => {
+        return likedServices.includes(serviceId);
+    };
 
     return (
         <div>
             <div className='job-list-wrapper'>
                 <div className='max-width-container'>
-                    <h1>Job List</h1>
-
                     {searchTerm && (
                         <div>
                             <h2>
@@ -100,14 +158,21 @@ const JobList = () => {
                                 : services.map((service: Service) => (
                                       <div key={service.id} className='job-item'>
                                           <div className='job-item__image'>
-                                              <img
-                                                  src={`https://via.placeholder.com/150?text=${service.title}`}
-                                                  alt={service.title}
-                                              />
+                                              <LazyLoad height={150} once>
+                                                  <img
+                                                      src={`https://via.placeholder.com/150?text=${service.title}`}
+                                                      alt={service.title}
+                                                  />
+                                              </LazyLoad>
                                           </div>
                                           <div className='job-item__body'>
                                               <div className='seller-info'>
-                                                  <img src={`https://via.placeholder.com/50`} alt={service.username} />
+                                                  <LazyLoad height={50} once>
+                                                      <img
+                                                          src={`https://via.placeholder.com/50`}
+                                                          alt={service.username}
+                                                      />
+                                                  </LazyLoad>
                                                   <p>{service.username}</p>
                                               </div>
                                               <div className='job-item__content'>
@@ -120,6 +185,31 @@ const JobList = () => {
                                                   <p>
                                                       Starting at US<strong>${service.price}</strong>
                                                   </p>
+                                                  <Tooltip title='Add to favorites'>
+                                                      {isLiked(service.id) ? (
+                                                          <HeartFilled
+                                                              onClick={() => handleUnlike(service.id)}
+                                                              style={{
+                                                                  position: 'absolute',
+                                                                  top: '10px',
+                                                                  right: '10px',
+                                                                  fontSize: '24px',
+                                                                  color: '#eb2f96',
+                                                              }}
+                                                          />
+                                                      ) : (
+                                                          <HeartOutlined
+                                                              onClick={() => handleLike(service.id)}
+                                                              style={{
+                                                                  position: 'absolute',
+                                                                  top: '10px',
+                                                                  right: '10px',
+                                                                  fontSize: '24px',
+                                                                  color: '#eb2f96',
+                                                              }}
+                                                          />
+                                                      )}
+                                                  </Tooltip>
                                               </div>
                                           </div>
                                       </div>
@@ -128,6 +218,14 @@ const JobList = () => {
                     </div>
                 </div>
             </div>
+            <Modal
+                title='Login Required'
+                open={isLoginModalVisible}
+                onCancel={() => setIsLoginModalVisible(false)}
+                zIndex={10000}
+                footer={null}>
+                <Login />
+            </Modal>
         </div>
     );
 };

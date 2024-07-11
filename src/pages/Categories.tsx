@@ -3,6 +3,7 @@ import { Table, Button, Modal, Form, Input, Space } from 'antd';
 import axiosInstance from '../utils/api';
 
 const { Column } = Table;
+const { confirm } = Modal;
 
 interface Category {
     id: string;
@@ -71,13 +72,25 @@ const Categories: React.FC = () => {
         form.resetFields();
     };
 
-    const handleDeleteCategory = async (id: string) => {
-        try {
-            await axiosInstance.delete(`/categories/${id}`);
-            fetchCategories();
-        } catch (error) {
-            console.error('Error deleting category:', error);
-        }
+    const showDeleteConfirm = (id: string) => {
+        confirm({
+            title: 'Are you sure you want to delete this category?',
+            content: 'This action cannot be undone.',
+            okText: 'Yes',
+            okType: 'danger',
+            cancelText: 'No',
+            onOk: async () => {
+                try {
+                    await axiosInstance.delete(`/categories/${id}`);
+                    fetchCategories();
+                } catch (error) {
+                    console.error('Error deleting category:', error);
+                }
+            },
+            onCancel() {
+                console.log('Cancel');
+            },
+        });
     };
 
     return (
@@ -90,8 +103,17 @@ const Categories: React.FC = () => {
                     key='action'
                     render={(_text, record: Category) => (
                         <Space size='middle'>
-                            <Button onClick={() => handleEditCategory(record)}>Sửa</Button>
-                            <Button onClick={() => handleDeleteCategory(record.id)}>Xóa</Button>
+                            <Button
+                                style={{
+                                    color: 'blue',
+                                    borderColor: 'blue',
+                                }}
+                                onClick={() => handleEditCategory(record)}>
+                                Sửa
+                            </Button>
+                            <Button danger onClick={() => showDeleteConfirm(record.id)}>
+                                Xóa
+                            </Button>
                         </Space>
                     )}
                 />

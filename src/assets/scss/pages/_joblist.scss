@@ -97,6 +97,9 @@
 
 .listing-container .job-item {
     width: 100%;
+    border-radius: 5px;
+    overflow: hidden;
+    position: relative;
 }
 
 .listing-container.grid-view .job-item img {

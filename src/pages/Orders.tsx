@@ -107,7 +107,24 @@ const Orders: React.FC = () => {
             dataIndex: 'status',
             key: 'status',
             render: (status: string) => {
-                let color = status === 'Completed' ? 'green' : status === 'In Progress' ? 'geekblue' : 'volcano';
+                let color;
+                switch (status.toLowerCase()) {
+                    case 'pending':
+                        color = 'orange';
+                        break;
+                    case 'in_progress':
+                        color = 'blue';
+                        break;
+                    case 'cancelled':
+                        color = 'red';
+                        break;
+                    case 'completed':
+                        color = 'green';
+                        break;
+                    default:
+                        color = 'gray';
+                        break;
+                }
                 return (
                     <Tag color={color} key={status}>
                         {status.toUpperCase()}
@@ -126,7 +143,7 @@ const Orders: React.FC = () => {
             <Table columns={columns} dataSource={orders.map(order => ({ ...order, key: order.id }))} />
             <Modal
                 title='Add Order'
-                visible={isModalVisible}
+                open={isModalVisible}
                 onCancel={handleCancel}
                 footer={[
                     <Button key='back' onClick={handleCancel}>

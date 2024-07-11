@@ -52,7 +52,7 @@ const CategoriesMenu: React.FC<CategoriesMenuProps> = ({ className }) => {
     }, [categoryName, categoriesMenu, dispatch, navigate]);
 
     const renderSubmenuContent = (subcategory: Subcategory, categoryName) => (
-        <div>
+        <div key={`${categoryName}-${subcategory.id}`}>
             <h3 style={{ marginBottom: '8px' }}>{subcategory.name}</h3>
             {subcategory.childCategories.map(childCategory => (
                 <NavLink

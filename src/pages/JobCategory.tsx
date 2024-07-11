@@ -132,7 +132,6 @@ const JobCategory: React.FC = () => {
     const [slidesToScroll, setSlidesToScroll] = useState(1);
     const categoriesMenu = useAppSelector(state => state.congViecReducer.categoriesMenu) as Category[];
     const categoryDetails = useAppSelector(state => state.congViecReducer.categoryDetails) as CategoryDetails | null;
-    console.log('categoryDetails', categoryDetails);
     const totalSlides = popularTags.length;
     const initialSlidesToShow = 5;
     const initialSlidesToScroll = totalSlides < initialSlidesToShow ? 1 : initialSlidesToShow;
