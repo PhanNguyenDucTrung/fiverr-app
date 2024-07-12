@@ -28,7 +28,8 @@ const Header = () => {
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        navigate('/result/?search=' + searchTerm);
+
+        navigate(`/search/services?query=${encodeURIComponent(searchTerm)}`);
     };
 
     const handleLogout = () => {

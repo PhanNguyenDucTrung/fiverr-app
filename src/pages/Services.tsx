@@ -20,9 +20,8 @@ const Jobs: React.FC = () => {
             setLoading(true);
             setError(null);
             try {
-                const response = await axiosInstance<Job[]>('/services');
+                const response = await axiosInstance.get<Job[]>('/services');
                 const jobsData = response.data.map((job, index) => ({ ...job, key: String(index) }));
-                console.log('jobsData', jobsData);
                 setJobs(jobsData);
             } catch (err) {
                 setError('Failed to fetch jobs');
@@ -74,7 +73,9 @@ const Jobs: React.FC = () => {
                 Add Job
             </Button>
             {loading ? (
-                <Spin size='large' />
+                <div style={{ textAlign: 'center', marginTop: 20 }}>
+                    <Spin size='large' />
+                </div>
             ) : error ? (
                 <Alert message='Error' description={error} type='error' showIcon />
             ) : (

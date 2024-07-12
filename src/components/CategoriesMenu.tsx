@@ -30,7 +30,7 @@ interface CategoriesMenuProps {
 const CategoriesMenu: React.FC<CategoriesMenuProps> = ({ className }) => {
     const dispatch = useAppDispatch();
     const categoriesMenu = useAppSelector(state => state.congViecReducer?.categoriesMenu) as Category[];
-    console.log(categoriesMenu);
+    // console.log(categoriesMenu);
     const { categoryName } = useParams<{ categoryName: string }>();
     const navigate = useNavigate();
 
@@ -121,7 +121,7 @@ const CategoriesMenu: React.FC<CategoriesMenuProps> = ({ className }) => {
                         Menu: {
                             itemColor: '#62646A',
                             horizontalItemHoverColor: '#74767E',
-                            horizontalItemSelectedColor: '#74767E',
+                            horizontalItemSelectedColor: ' #1dbf73 ',
                         },
                     },
                 }}>

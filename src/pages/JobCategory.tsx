@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { useParams } from 'react-router-dom';
+import { useParams, NavLink } from 'react-router-dom';
 import Slider from 'react-slick';
 import { Spin } from 'antd';
 import { fetchSubcategories } from '../redux/reducers/congViecSlice';
@@ -153,7 +153,6 @@ const JobCategory: React.FC = () => {
     }, [categoryName, categoriesMenu, dispatch]);
 
     const handleBeforeChange = (_currentSlide, nextSlide) => {
-        // console.log('currentSlide', currentSlide);
         const remainingSlides = totalSlides - nextSlide;
         setSlidesToScroll(remainingSlides < initialSlidesToShow ? remainingSlides : initialSlidesToShow);
     };
@@ -255,7 +254,6 @@ const JobCategory: React.FC = () => {
                                 src='https://fiverr-res.cloudinary.com/video/upload/t_fiverr_hd/vmvv3czyk2ifedefkau7'
                                 type='video/mp4'></source>
                         </video>
-                        {/* <button onClick={() => setModalIsOpen(false)}>Close</button> */}
                     </Modal>
                 </div>
             </div>
@@ -286,8 +284,14 @@ const JobCategory: React.FC = () => {
                                 <ul>
                                     {subcategory.childCategories.map(childCategory => (
                                         <li key={childCategory.id}>
-                                            <a
-                                                href='#'
+                                            <NavLink
+                                                to={`/categories/${name
+                                                    .toLowerCase()
+                                                    .replace(/\s/g, '-')}/${subcategory.name
+                                                    ?.toLowerCase()
+                                                    .replace(/\s/g, '-')}/${childCategory.name
+                                                    .toLowerCase()
+                                                    .replace(/\s/g, '-')}/${childCategory.id}`}
                                                 style={{
                                                     display: 'flex',
                                                     alignItems: 'center',
@@ -295,9 +299,8 @@ const JobCategory: React.FC = () => {
                                                 }}>
                                                 <span>{childCategory.name}</span>
 
-                                                {/* arrow icon */}
                                                 <i className='fas fa-arrow-right'></i>
-                                            </a>
+                                            </NavLink>
                                         </li>
                                     ))}
                                 </ul>

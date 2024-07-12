@@ -45,7 +45,7 @@ function App() {
                 <Route path='/login' element={<Login />} />
                 <Route path='/profile' element={<Profile />} />
                 <Route path='/job-category' element={<JobCategory />} />
-                <Route path='/result' element={<JobList />} />
+                <Route path='/search/services' element={<JobList />} />
                 <Route path='/job-detail' element={<JobDetail />} />
 
                 <Route path='/categories/:categoryName' element={<JobCategory />} />

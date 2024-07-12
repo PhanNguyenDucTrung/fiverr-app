@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Modal, Form, Input, Space } from 'antd';
+import { Table, Button, Modal, Form, Input, Space, Spin } from 'antd';
 import axiosInstance from '../utils/api';
 
 const { Column } = Table;
@@ -22,17 +22,21 @@ const Categories: React.FC = () => {
     const [editingCategory, setEditingCategory] = useState<Category | null>(null);
     const [form] = Form.useForm();
     const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
+    const [loading, setLoading] = useState(false); // State for loading indicator
 
     useEffect(() => {
         fetchCategories();
     }, []);
 
     const fetchCategories = async () => {
+        setLoading(true); // Set loading to true before fetching
         try {
             const response = await axiosInstance.get<Category[]>('/categories');
             setCategories(response.data);
         } catch (error) {
             console.error('Error fetching categories:', error);
+        } finally {
+            setLoading(false); // Set loading to false after fetching
         }
     };
 
@@ -95,32 +99,34 @@ const Categories: React.FC = () => {
 
     return (
         <div>
-            <Table dataSource={categories} rowKey='id' style={{ marginTop: 20 }}>
-                <Column title='ID' dataIndex='id' key='id' />
-                <Column title='Tên danh mục' dataIndex='name' key='name' />
-                <Column
-                    title='Hành động'
-                    key='action'
-                    render={(_text, record: Category) => (
-                        <Space size='middle'>
-                            <Button
-                                style={{
-                                    color: 'blue',
-                                    borderColor: 'blue',
-                                }}
-                                onClick={() => handleEditCategory(record)}>
-                                Sửa
-                            </Button>
-                            <Button danger onClick={() => showDeleteConfirm(record.id)}>
-                                Xóa
-                            </Button>
-                        </Space>
-                    )}
-                />
-            </Table>
+            <Spin spinning={loading}>
+                <Table dataSource={categories} rowKey='id' style={{ marginTop: 20 }}>
+                    <Column title='ID' dataIndex='id' key='id' />
+                    <Column title='Tên danh mục' dataIndex='name' key='name' />
+                    <Column
+                        title='Hành động'
+                        key='action'
+                        render={(_text, record: Category) => (
+                            <Space size='middle'>
+                                <Button
+                                    style={{
+                                        color: 'blue',
+                                        borderColor: 'blue',
+                                    }}
+                                    onClick={() => handleEditCategory(record)}>
+                                    Sửa
+                                </Button>
+                                <Button danger onClick={() => showDeleteConfirm(record.id)}>
+                                    Xóa
+                                </Button>
+                            </Space>
+                        )}
+                    />
+                </Table>
+            </Spin>
             <Modal
                 title={editingCategory ? 'Sửa danh mục' : 'Thêm danh mục'}
-                open={isModalVisible}
+                visible={isModalVisible}
                 onOk={handleOk}
                 onCancel={handleCancel}>
                 <Form form={form} layout='vertical'>

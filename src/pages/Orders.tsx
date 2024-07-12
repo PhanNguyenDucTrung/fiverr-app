@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, Form, Input, Select, Tag } from 'antd';
+import { Table, Button, Modal, Form, Input, Select, Tag, Spin } from 'antd';
 import axiosInstance from '../utils/api';
 
 const { Option } = Select;
@@ -24,15 +24,19 @@ interface Order {
 const Orders: React.FC = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [orders, setOrders] = useState<Order[]>([]);
+    const [loading, setLoading] = useState(false); // State for loading indicator
     const [form] = Form.useForm();
 
     useEffect(() => {
         const fetchOrders = async () => {
+            setLoading(true); // Set loading to true before fetching
             try {
                 const response = await axiosInstance.get<Order[]>('/orders');
                 setOrders(response.data);
             } catch (error) {
                 console.error('Error fetching orders:', error);
+            } finally {
+                setLoading(false); // Set loading to false after fetching
             }
         };
 
@@ -140,10 +144,12 @@ const Orders: React.FC = () => {
             <Button type='primary' onClick={showModal} style={{ marginBottom: 16 }}>
                 Add Order
             </Button>
-            <Table columns={columns} dataSource={orders.map(order => ({ ...order, key: order.id }))} />
+            <Spin spinning={loading}>
+                <Table columns={columns} dataSource={orders.map(order => ({ ...order, key: order.id }))} />
+            </Spin>
             <Modal
                 title='Add Order'
-                open={isModalVisible}
+                visible={isModalVisible} // Use `visible` instead of `open` for Modal
                 onCancel={handleCancel}
                 footer={[
                     <Button key='back' onClick={handleCancel}>

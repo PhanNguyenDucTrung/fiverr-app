@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import Filter from '../components/Filter';
 import axiosInstance from '../utils/api';
 import { Skeleton, Tooltip, Modal } from 'antd';
@@ -8,6 +8,7 @@ import LazyLoad from 'react-lazyload';
 import { useAppSelector, useAppDispatch } from '../redux/hooks';
 import { fetchUserProfile } from '../redux/reducers/authSlice';
 import Login from './Login';
+import message from 'antd/lib/message';
 
 interface Service {
     id: string;
@@ -18,6 +19,7 @@ interface Service {
     price: number;
     rating: number;
     likes: number;
+    averageRating: number;
 }
 
 const JobList: React.FC = () => {
@@ -25,13 +27,28 @@ const JobList: React.FC = () => {
     const dispatch = useAppDispatch();
     const [likedServices, setLikedServices] = useState<string[]>([]);
     const queryParams = new URLSearchParams(location.search);
-    const searchTerm = queryParams.get('search');
+    const searchTerm = queryParams.get('query');
+
     const [services, setServices] = useState<Service[]>([]);
     const [loading, setLoading] = useState(true);
-
+    const { tenChiTiet } = useParams<{ tenChiTiet: string }>();
     const [isLoginModalVisible, setIsLoginModalVisible] = useState(false);
     const token = useAppSelector(state => state.authReducer.token);
     const profile = useAppSelector(state => state.authReducer.profile);
+
+    const fetchServicesBySearch = async (searchTerm: string) => {
+        try {
+            setLoading(true);
+            const response = await axiosInstance.get<Service[]>(
+                `/services/search?query=${encodeURIComponent(searchTerm)}`
+            );
+            setServices(response.data);
+        } catch (error) {
+            console.error('Error fetching services:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const fetchServicesByCategory = async (categoryId: string) => {
         try {
@@ -55,8 +72,12 @@ const JobList: React.FC = () => {
         const pathSegments = location.pathname.split('/');
         const childCategoryId = pathSegments[pathSegments.length - 1];
 
-        fetchServicesByCategory(childCategoryId);
-    }, [location.pathname, profile, token]);
+        if (searchTerm) {
+            fetchServicesBySearch(searchTerm);
+        } else if (childCategoryId) {
+            fetchServicesByCategory(childCategoryId);
+        }
+    }, [location.pathname, location.search, profile, token, searchTerm]);
 
     const handleLike = async (serviceId: string) => {
         if (!token) {
@@ -65,7 +86,9 @@ const JobList: React.FC = () => {
         }
 
         try {
-            await axiosInstance.post(`/services/${serviceId}/like`);
+            const response = await axiosInstance.post(`/services/${serviceId}/like`);
+            console.log('Like response:', response);
+            if (response.status === 200) message.success('Service liked successfully');
             setLikedServices(prevLikedServices => [...prevLikedServices, serviceId]);
             setServices(prevServices =>
                 prevServices.map(service =>
@@ -84,7 +107,8 @@ const JobList: React.FC = () => {
         }
 
         try {
-            await axiosInstance.post(`/services/${serviceId}/unlike`);
+            const response = await axiosInstance.post(`/services/${serviceId}/unlike`);
+            if (response.status === 200) message.success('Service unliked successfully');
             setLikedServices(prevLikedServices => prevLikedServices.filter(id => id !== serviceId));
             setServices(prevServices =>
                 prevServices.map(service =>
@@ -104,6 +128,17 @@ const JobList: React.FC = () => {
         <div>
             <div className='job-list-wrapper'>
                 <div className='max-width-container'>
+                    <h2
+                        style={{
+                            marginTop: '20px',
+                            marginBottom: '20px',
+                        }}>
+                        {tenChiTiet &&
+                            tenChiTiet
+                                .split('-')
+                                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                                .join(' ')}
+                    </h2>
                     {searchTerm && (
                         <div>
                             <h2>
@@ -178,10 +213,7 @@ const JobList: React.FC = () => {
                                               <div className='job-item__content'>
                                                   <h3>{service.title}</h3>
                                                   <p>{service.description}</p>
-                                                  <p>
-                                                      ⭐ {service.rating || 0}
-                                                      {/* <span>({service.userId})</span> */}
-                                                  </p>
+                                                  <p>⭐ {service.averageRating || 0}</p>
                                                   <p>
                                                       Starting at US<strong>${service.price}</strong>
                                                   </p>
