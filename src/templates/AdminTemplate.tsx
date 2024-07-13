@@ -34,17 +34,23 @@ const AdminTemplate: React.FC = () => {
     return (
         <Layout style={{ minHeight: '100vh' }}>
             <Sider trigger={null} collapsible collapsed={collapsed}>
-                <div
-                    className='logo'
-                    style={{
-                        height: '32px',
-                        background: 'rgba(255, 255, 255, 0.2)',
-                        margin: '16px',
-                        color: 'white',
-                        fontSize: '20px',
-                        padding: '0 14px',
-                        lineHeight: '32px',
-                    }}></div>
+                <NavLink to='/'>
+                    {' '}
+                    <div
+                        className='logo'
+                        style={{
+                            height: '32px',
+                            background: 'rgba(255, 255, 255, 0.2)',
+                            margin: '16px',
+                            color: 'white',
+                            fontSize: '20px',
+                            padding: '0 14px',
+                            lineHeight: '32px',
+                            textAlign: 'center',
+                        }}>
+                        <span style={{ color: 'white' }}>Home</span>
+                    </div>
+                </NavLink>
                 <Menu theme='dark' mode='inline' defaultSelectedKeys={['1']}>
                     <Menu.Item key='1' icon={<UserOutlined />}>
                         <NavLink to='/admin/users'>Quản lý người dùng</NavLink>

@@ -103,7 +103,7 @@ const Users = () => {
 
     return (
         <div>
-            <h1>Quản lý người dùng</h1>
+            <h1>Users Management</h1>
             <Button type='primary' onClick={() => setIsModalVisible(true)}>
                 Add User
             </Button>

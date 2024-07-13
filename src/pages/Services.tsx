@@ -68,7 +68,7 @@ const Jobs: React.FC = () => {
 
     return (
         <div>
-            <h1>Quản lý danh sách công việc</h1>
+            <h1>Jobs Management</h1>
             <Button type='primary' onClick={showModal} style={{ marginBottom: 16 }}>
                 Add Job
             </Button>

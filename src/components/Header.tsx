@@ -63,7 +63,7 @@ const Header = () => {
                             </h2>
                             <div
                                 className={`search-container header-search ${
-                                    isHomePage && scrollY <= 400 ? '' : 'visible'
+                                    isHomePage && scrollY <= 280 ? '' : 'visible'
                                 }`}>
                                 <form onSubmit={handleSubmit}>
                                     <input

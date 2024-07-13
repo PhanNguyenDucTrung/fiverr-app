@@ -99,6 +99,7 @@ const Categories: React.FC = () => {
 
     return (
         <div>
+            <h1>Categories</h1>
             <Spin spinning={loading}>
                 <Table dataSource={categories} rowKey='id' style={{ marginTop: 20 }}>
                     <Column title='ID' dataIndex='id' key='id' />
