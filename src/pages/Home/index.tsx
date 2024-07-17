@@ -1,50 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Slider from 'react-slick';
 import { PlayCircleOutlined } from '@ant-design/icons';
-import { FaChevronRight, FaChevronLeft } from 'react-icons/fa';
 import TestimonialSlider from '../../components/TestimonialSlider';
 import VideoModal from '../../components/VideoModal';
 import CheckIcon from '../../components/CheckIcon';
 import PopularServiceCarousel from './PopularServiceCarousel';
-
 import { sellingPropositions } from './data';
-
-const CustomNextArrow = ({
-    className,
-    style,
-    onClick,
-}: {
-    className: string;
-    style: React.CSSProperties;
-    onClick: () => void;
-}) => {
-    console.log('className', className);
-
-    return (
-        <button className={className} style={{ ...style }} onClick={onClick}>
-            <FaChevronRight style={{ color: '#62646a', fontSize: '25px' }} />
-        </button>
-    );
-};
-
-const CustomPrevArrow = ({
-    className,
-    style,
-    onClick,
-}: {
-    className: string;
-    style: React.CSSProperties;
-    onClick: () => void;
-}) => {
-    console.log('className', className);
-
-    return (
-        <button className={className} style={{ ...style }} onClick={onClick}>
-            <FaChevronLeft style={{ color: '#62646a', fontSize: '25px' }} />
-        </button>
-    );
-};
 
 const Home = () => {
     const navigate = useNavigate();
