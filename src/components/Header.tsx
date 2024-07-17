@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import { FormEvent, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { clearToken, fetchUserProfile } from '../redux/reducers/authSlice';
+import { fetchUserProfile } from '../redux/reducers/authSlice';
 import { useNavigate } from 'react-router-dom';
 import hamburger from '../assets/hamburger.svg';
 
@@ -19,10 +19,6 @@ const Header: React.FC<HeaderProps> = ({ isHomePage, scrollY }) => {
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         navigate(`/search/services?query=${encodeURIComponent(searchTerm)}`);
-    };
-
-    const handleLogout = () => {
-        dispatch(clearToken());
     };
 
     useEffect(() => {
