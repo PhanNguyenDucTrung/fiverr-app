@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Modal, Form, Input, Space, Spin } from 'antd';
-import axiosInstance from '../utils/api';
+import { Table, Button, Modal, Form, Input, Space, Spin, message } from 'antd';
+import { useAppSelector, useAppDispatch } from '../redux/hooks';
+import {
+    fetchCategories,
+    fetchSubcategories,
+    createCategory,
+    updateCategory,
+    deleteCategory,
+} from '../redux/reducers/categoriesSlice';
 
 const { Column } = Table;
 const { confirm } = Modal;
@@ -17,42 +24,23 @@ interface Subcategory {
 }
 
 const Categories: React.FC = () => {
-    const [categories, setCategories] = useState<Category[]>([]);
+    const dispatch = useAppDispatch();
+    const categories = useAppSelector(state => state.categoriesReducer.categories);
+    const loading = useAppSelector(state => state.categoriesReducer.loading);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [editingCategory, setEditingCategory] = useState<Category | null>(null);
     const [form] = Form.useForm();
     const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
-    const [loading, setLoading] = useState(false); // State for loading indicator
 
     useEffect(() => {
-        fetchCategories();
-    }, []);
-
-    const fetchCategories = async () => {
-        setLoading(true); // Set loading to true before fetching
-        try {
-            const response = await axiosInstance.get<Category[]>('/categories');
-            setCategories(response.data);
-        } catch (error) {
-            console.error('Error fetching categories:', error);
-        } finally {
-            setLoading(false); // Set loading to false after fetching
-        }
-    };
-
-    const fetchSubcategories = async (categoryId: string) => {
-        try {
-            const response = await axiosInstance.get<Category>(`/categories/${categoryId}`);
-            setSubcategories(response.data.subcategories || []);
-        } catch (error) {
-            console.error('Error fetching subcategories:', error);
-        }
-    };
+        dispatch(fetchCategories());
+    }, [dispatch]);
 
     const handleEditCategory = async (category: Category) => {
         setEditingCategory(category);
         form.setFieldsValue({ name: category.name });
-        fetchSubcategories(category.id);
+        const { subcategories } = await dispatch(fetchSubcategories(category.id)).unwrap();
+        setSubcategories(subcategories);
         setIsModalVisible(true);
     };
 
@@ -60,14 +48,16 @@ const Categories: React.FC = () => {
         try {
             const values = await form.validateFields();
             if (editingCategory) {
-                await axiosInstance.put(`/categories/${editingCategory.id}`, values);
+                await dispatch(updateCategory({ ...editingCategory, ...values })).unwrap();
+                message.success('Category updated successfully');
             } else {
-                await axiosInstance.post('/categories', values);
+                await dispatch(createCategory(values)).unwrap();
+                message.success('Category created successfully');
             }
-            fetchCategories();
             setIsModalVisible(false);
+            form.resetFields();
         } catch (error) {
-            console.error('Error handling form submission:', error);
+            message.error('Failed to save category');
         }
     };
 
@@ -85,10 +75,10 @@ const Categories: React.FC = () => {
             cancelText: 'No',
             onOk: async () => {
                 try {
-                    await axiosInstance.delete(`/categories/${id}`);
-                    fetchCategories();
+                    await dispatch(deleteCategory(id)).unwrap();
+                    message.success('Category deleted successfully');
                 } catch (error) {
-                    console.error('Error deleting category:', error);
+                    message.error('Failed to delete category');
                 }
             },
             onCancel() {
@@ -103,9 +93,9 @@ const Categories: React.FC = () => {
             <Spin spinning={loading}>
                 <Table dataSource={categories} rowKey='id' style={{ marginTop: 20 }}>
                     <Column title='ID' dataIndex='id' key='id' />
-                    <Column title='Tên danh mục' dataIndex='name' key='name' />
+                    <Column title='Category Name' dataIndex='name' key='name' />
                     <Column
-                        title='Hành động'
+                        title='Actions'
                         key='action'
                         render={(_text, record: Category) => (
                             <Space size='middle'>
@@ -115,10 +105,10 @@ const Categories: React.FC = () => {
                                         borderColor: 'blue',
                                     }}
                                     onClick={() => handleEditCategory(record)}>
-                                    Sửa
+                                    Edit
                                 </Button>
                                 <Button danger onClick={() => showDeleteConfirm(record.id)}>
-                                    Xóa
+                                    Delete
                                 </Button>
                             </Space>
                         )}
@@ -126,19 +116,19 @@ const Categories: React.FC = () => {
                 </Table>
             </Spin>
             <Modal
-                title={editingCategory ? 'Sửa danh mục' : 'Thêm danh mục'}
+                title={editingCategory ? 'Edit Category' : 'Add Category'}
                 visible={isModalVisible}
                 onOk={handleOk}
                 onCancel={handleCancel}>
                 <Form form={form} layout='vertical'>
                     <Form.Item
                         name='name'
-                        label='Tên danh mục'
-                        rules={[{ required: true, message: 'Vui lòng nhập tên danh mục' }]}>
+                        label='Category Name'
+                        rules={[{ required: true, message: 'Please enter the category name' }]}>
                         <Input />
                     </Form.Item>
                     {editingCategory && (
-                        <Form.Item label='Danh sách subcategories'>
+                        <Form.Item label='Subcategories'>
                             <ul>
                                 {subcategories.map((subcategory: Subcategory) => (
                                     <li key={subcategory.id}>{subcategory.name}</li>

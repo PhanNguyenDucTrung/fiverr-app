@@ -1,53 +1,41 @@
-import { useEffect, useState } from 'react';
-import { Table, Button, Space, Modal, Form, Input, message } from 'antd';
-
+import React, { useEffect, useState } from 'react';
+import { Table, Button, Space, Modal, Form, Input, message, Spin, Alert } from 'antd';
+import { useAppSelector, useAppDispatch } from '../redux/hooks';
+import { fetchUsers, deleteUser } from '../redux/reducers/usersSlice';
 import axiosInstance from '../utils/api';
 
-const Users = () => {
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(false);
+const Users: React.FC = () => {
+    const dispatch = useAppDispatch();
+    const users = useAppSelector(state => state.usersReducer.users);
+    const loading = useAppSelector(state => state.usersReducer.loading);
+    const error = useAppSelector(state => state.usersReducer.error);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [form] = Form.useForm();
     const [editingUser, setEditingUser] = useState<{ username: string; id: string } | null>(null);
 
     useEffect(() => {
-        fetchUsers();
-    }, []);
-
-    const fetchUsers = async () => {
-        setLoading(true);
-        try {
-            const response = await axiosInstance.get('/users');
-            setUsers(response.data);
-        } catch (error) {
-            message.error('Failed to fetch users');
-        }
-        setLoading(false);
-    };
+        dispatch(fetchUsers());
+    }, [dispatch]);
 
     const handleEdit = record => {
-        console.log(record);
         setEditingUser(record);
         form.setFieldsValue(record);
         setIsModalVisible(true);
     };
 
-    const handleDelete = async userId => {
-        setLoading(true);
+    const handleDelete = async (userId: string) => {
         try {
-            await axiosInstance.delete(`/users/${userId}`);
+            await dispatch(deleteUser(userId)).unwrap();
             message.success('User deleted successfully');
-            fetchUsers();
         } catch (error) {
             message.error('Failed to delete user');
         }
-        setLoading(false);
     };
 
     const handleOk = async () => {
         try {
             const values = await form.validateFields();
-            setLoading(true);
+
             if (editingUser) {
                 await axiosInstance.put(`/users/${editingUser.id}`, values);
                 message.success('User updated successfully');
@@ -58,11 +46,10 @@ const Users = () => {
             form.resetFields();
             setIsModalVisible(false);
             setEditingUser(null);
-            fetchUsers();
+            dispatch(fetchUsers()); // Refresh the users list
         } catch (error) {
             message.error('Failed to save user');
         }
-        setLoading(false);
     };
 
     const handleCancel = () => {
@@ -80,7 +67,7 @@ const Users = () => {
         {
             title: 'Name',
             dataIndex: 'username',
-            key: 'name',
+            key: 'username',
         },
         {
             title: 'Email',
@@ -104,10 +91,16 @@ const Users = () => {
     return (
         <div>
             <h1>Users Management</h1>
-            <Button type='primary' onClick={() => setIsModalVisible(true)}>
+            <Button type='primary' onClick={() => setIsModalVisible(true)} style={{ marginBottom: 16 }}>
                 Add User
             </Button>
-            <Table columns={columns} dataSource={users} loading={loading} rowKey='id' />
+            <Spin spinning={loading}>
+                {error ? (
+                    <Alert message='Error' description={error} type='error' showIcon />
+                ) : (
+                    <Table columns={columns} dataSource={users} rowKey='id' />
+                )}
+            </Spin>
             <Modal
                 title={editingUser ? 'Edit User' : 'Add User'}
                 open={isModalVisible}
@@ -119,7 +112,7 @@ const Users = () => {
                         name='username'
                         label='Name'
                         rules={[{ required: true, message: 'Please input the name!' }]}>
-                        <Input value={editingUser?.username || ''} />
+                        <Input />
                     </Form.Item>
                     <Form.Item
                         name='email'

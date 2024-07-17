@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, Form, Input, Select, Tag, Spin } from 'antd';
-import axiosInstance from '../utils/api';
+import React, { useEffect, useState } from 'react';
+import { Table, Button, Modal, Form, Input, Select, Tag, Spin, Alert } from 'antd';
+import { useAppSelector, useAppDispatch } from '../redux/hooks';
+import { fetchOrders, createOrder } from '../redux/reducers/ordersSlice';
 
 const { Option } = Select;
 
 interface Order {
-    id: string;
+    id: number;
     service: {
         title: string;
         description: string;
@@ -22,26 +23,16 @@ interface Order {
 }
 
 const Orders: React.FC = () => {
+    const dispatch = useAppDispatch();
+    const orders = useAppSelector(state => state.ordersReducer.orders);
+    const loading = useAppSelector(state => state.ordersReducer.loading);
+    const error = useAppSelector(state => state.ordersReducer.error);
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [orders, setOrders] = useState<Order[]>([]);
-    const [loading, setLoading] = useState(false); // State for loading indicator
     const [form] = Form.useForm();
 
     useEffect(() => {
-        const fetchOrders = async () => {
-            setLoading(true); // Set loading to true before fetching
-            try {
-                const response = await axiosInstance.get<Order[]>('/orders');
-                setOrders(response.data);
-            } catch (error) {
-                console.error('Error fetching orders:', error);
-            } finally {
-                setLoading(false); // Set loading to false after fetching
-            }
-        };
-
-        fetchOrders();
-    }, []);
+        dispatch(fetchOrders());
+    }, [dispatch]);
 
     const showModal = () => {
         setIsModalVisible(true);
@@ -52,24 +43,8 @@ const Orders: React.FC = () => {
         form.resetFields();
     };
 
-    const handleAddOrder = (values: Omit<Order, 'id'>) => {
-        const newOrder = {
-            id: `${orders.length + 1}`,
-            service: {
-                title: values.service.title,
-                description: values.service.description,
-            },
-            buyer: {
-                username: values.buyer.username,
-            },
-            seller: {
-                username: values.seller.username,
-            },
-            price: values.price,
-            deliveryDate: values.deliveryDate,
-            status: values.status,
-        };
-        setOrders([...orders, newOrder]);
+    const handleAddOrder = async (values: Omit<Order, 'id'>) => {
+        await dispatch(createOrder(values));
         setIsModalVisible(false);
         form.resetFields();
     };
@@ -145,11 +120,15 @@ const Orders: React.FC = () => {
                 Add Order
             </Button>
             <Spin spinning={loading}>
-                <Table columns={columns} dataSource={orders.map(order => ({ ...order, key: order.id }))} />
+                {error ? (
+                    <Alert message='Error' description={error} type='error' showIcon />
+                ) : (
+                    <Table columns={columns} dataSource={orders.map(order => ({ ...order, key: order.id }))} />
+                )}
             </Spin>
             <Modal
                 title='Add Order'
-                visible={isModalVisible} // Use `visible` instead of `open` for Modal
+                open={isModalVisible}
                 onCancel={handleCancel}
                 footer={[
                     <Button key='back' onClick={handleCancel}>

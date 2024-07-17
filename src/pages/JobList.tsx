@@ -1,16 +1,15 @@
-import React, { useEffect, useState } from 'react';
+// src/pages/JobList.tsx
+import React, { useEffect, useState, useCallback } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
+import { Skeleton, Modal, message } from 'antd';
 import Filter from '../components/Filter';
 import axiosInstance from '../utils/api';
-import { Skeleton, Tooltip, Modal } from 'antd';
-import { HeartOutlined, HeartFilled } from '@ant-design/icons';
-import LazyLoad from 'react-lazyload';
 import { useAppSelector, useAppDispatch } from '../redux/hooks';
 import { fetchUserProfile } from '../redux/reducers/authSlice';
 import Login from './Login';
-import message from 'antd/lib/message';
+import ServiceItem from '../components/ServiceItem';
 
-interface Service {
+export interface Service {
     id: string;
     userId: string;
     username: string;
@@ -20,6 +19,7 @@ interface Service {
     rating: number;
     likes: number;
     averageRating: number;
+    reviewsCount: number;
 }
 
 const JobList: React.FC = () => {
@@ -28,7 +28,6 @@ const JobList: React.FC = () => {
     const [likedServices, setLikedServices] = useState<string[]>([]);
     const queryParams = new URLSearchParams(location.search);
     const searchTerm = queryParams.get('query');
-
     const [services, setServices] = useState<Service[]>([]);
     const [loading, setLoading] = useState(true);
     const { tenChiTiet } = useParams<{ tenChiTiet: string }>();
@@ -36,9 +35,8 @@ const JobList: React.FC = () => {
     const token = useAppSelector(state => state.authReducer.token);
     const profile = useAppSelector(state => state.authReducer.profile);
 
-    const fetchServicesBySearch = async (searchTerm: string) => {
+    const fetchServicesBySearch = useCallback(async (searchTerm: string) => {
         try {
-            setLoading(true);
             const response = await axiosInstance.get<Service[]>(
                 `/services/search?query=${encodeURIComponent(searchTerm)}`
             );
@@ -48,19 +46,18 @@ const JobList: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
-    const fetchServicesByCategory = async (categoryId: string) => {
+    const fetchServicesByCategory = useCallback(async (categoryId: string) => {
         try {
             const response = await axiosInstance.get<Service[]>(`/services/childcategory/${categoryId}`);
-            console.log('Services:', response.data);
             setServices(response.data);
         } catch (error) {
             console.error('Error fetching services:', error);
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
         if (!profile && token) {
@@ -68,7 +65,9 @@ const JobList: React.FC = () => {
         } else {
             setLikedServices(profile?.likedServices || []);
         }
+    }, [dispatch, profile, token]);
 
+    useEffect(() => {
         const pathSegments = location.pathname.split('/');
         const childCategoryId = pathSegments[pathSegments.length - 1];
 
@@ -77,17 +76,15 @@ const JobList: React.FC = () => {
         } else if (childCategoryId) {
             fetchServicesByCategory(childCategoryId);
         }
-    }, [location.pathname, location.search, profile, token, searchTerm]);
+    }, [location.pathname, location.search, fetchServicesBySearch, fetchServicesByCategory, searchTerm]);
 
     const handleLike = async (serviceId: string) => {
         if (!token) {
             setIsLoginModalVisible(true);
             return;
         }
-
         try {
             const response = await axiosInstance.post(`/services/${serviceId}/like`);
-            console.log('Like response:', response);
             if (response.status === 200) message.success('Service liked successfully');
             setLikedServices(prevLikedServices => [...prevLikedServices, serviceId]);
             setServices(prevServices =>
@@ -105,7 +102,6 @@ const JobList: React.FC = () => {
             setIsLoginModalVisible(true);
             return;
         }
-
         try {
             const response = await axiosInstance.post(`/services/${serviceId}/unlike`);
             if (response.status === 200) message.success('Service unliked successfully');
@@ -120,19 +116,13 @@ const JobList: React.FC = () => {
         }
     };
 
-    const isLiked = (serviceId: string) => {
-        return likedServices.includes(serviceId);
-    };
+    const isLiked = (serviceId: string) => likedServices.includes(serviceId);
 
     return (
         <div>
             <div className='job-list-wrapper'>
                 <div className='max-width-container'>
-                    <h2
-                        style={{
-                            marginTop: '20px',
-                            marginBottom: '20px',
-                        }}>
+                    <h2 style={{ marginTop: '20px', marginBottom: '20px' }}>
                         {tenChiTiet &&
                             tenChiTiet
                                 .split('-')
@@ -161,90 +151,31 @@ const JobList: React.FC = () => {
                                           </div>
                                           <div className='job-item__body'>
                                               <div className='seller-info'>
-                                                  <div
-                                                      style={{
-                                                          display: 'flex',
-                                                          alignItems: 'center',
-                                                      }}>
+                                                  <div style={{ display: 'flex', alignItems: 'center' }}>
                                                       <Skeleton.Avatar
                                                           active
                                                           size={50}
                                                           shape='circle'
-                                                          style={{
-                                                              marginTop: 10,
-                                                          }}
+                                                          style={{ marginTop: 10 }}
                                                       />
-                                                      <Skeleton.Input
-                                                          active
-                                                          style={{
-                                                              marginTop: 10,
-                                                          }}
-                                                      />
+                                                      <Skeleton.Input active style={{ marginTop: 10 }} />
                                                   </div>
                                               </div>
                                               <div className='job-item__content'>
                                                   <Skeleton.Input active style={{ width: '100%', marginTop: 10 }} />
-
                                                   <Skeleton.Input active style={{ width: '100%', marginTop: 10 }} />
                                               </div>
                                           </div>
                                       </div>
                                   ))
-                                : services.map((service: Service) => (
-                                      <div key={service.id} className='job-item'>
-                                          <div className='job-item__image'>
-                                              <LazyLoad height={150} once>
-                                                  <img
-                                                      src={`https://via.placeholder.com/150?text=${service.title}`}
-                                                      alt={service.title}
-                                                  />
-                                              </LazyLoad>
-                                          </div>
-                                          <div className='job-item__body'>
-                                              <div className='seller-info'>
-                                                  <LazyLoad height={50} once>
-                                                      <img
-                                                          src={`https://via.placeholder.com/50`}
-                                                          alt={service.username}
-                                                      />
-                                                  </LazyLoad>
-                                                  <p>{service.username}</p>
-                                              </div>
-                                              <div className='job-item__content'>
-                                                  <h3>{service.title}</h3>
-                                                  <p>{service.description}</p>
-                                                  <p>⭐ {service.averageRating || 0}</p>
-                                                  <p>
-                                                      Starting at US<strong>${service.price}</strong>
-                                                  </p>
-                                                  <Tooltip title='Add to favorites'>
-                                                      {isLiked(service.id) ? (
-                                                          <HeartFilled
-                                                              onClick={() => handleUnlike(service.id)}
-                                                              style={{
-                                                                  position: 'absolute',
-                                                                  top: '10px',
-                                                                  right: '10px',
-                                                                  fontSize: '24px',
-                                                                  color: '#eb2f96',
-                                                              }}
-                                                          />
-                                                      ) : (
-                                                          <HeartOutlined
-                                                              onClick={() => handleLike(service.id)}
-                                                              style={{
-                                                                  position: 'absolute',
-                                                                  top: '10px',
-                                                                  right: '10px',
-                                                                  fontSize: '24px',
-                                                                  color: '#eb2f96',
-                                                              }}
-                                                          />
-                                                      )}
-                                                  </Tooltip>
-                                              </div>
-                                          </div>
-                                      </div>
+                                : services.map(service => (
+                                      <ServiceItem
+                                          key={service.id}
+                                          service={service}
+                                          isLiked={isLiked}
+                                          handleLike={handleLike}
+                                          handleUnlike={handleUnlike}
+                                      />
                                   ))}
                         </div>
                     </div>

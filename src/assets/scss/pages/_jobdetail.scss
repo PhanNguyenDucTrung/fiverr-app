@@ -1,7 +1,12 @@
 .job-detail {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     gap: 16px;
+    padding: 20px;
+
+    @media (min-width: 768px) {
+        flex-direction: row;
+    }
 
     .left-content {
         flex: 2;
@@ -11,6 +16,18 @@
         flex: 1;
         position: relative; /* Ensure the container's position is relative for sticky to work */
 
+        .sticky-card {
+            position: -webkit-sticky; /* For Safari */
+            position: sticky;
+            top: 20px; /* Adjust the top offset as needed */
+            z-index: 1; /* Ensure the sticky element stays above other content */
+            background-color: #fff; /* Ensure background remains visible */
+            padding: 16px; /* Add padding for spacing */
+            border: 1px solid #f0f0f0; /* Optional: Add border for styling */
+            border-radius: 4px; /* Optional: Add border radius for rounded corners */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for depth */
+        }
+
         .pricing-title {
             display: flex;
             justify-content: space-between;
@@ -19,7 +36,7 @@
 
         .pricing-title h4 {
             font-weight: 600;
-            margin-bottom: 0; /* Remove default margin */
+            margin-bottom: 0;
         }
 
         .pricing-price {
@@ -33,14 +50,36 @@
         }
     }
 
-    .sticky-card {
-        position: sticky;
-        top: 20px; /* Adjust the top offset as needed */
-        z-index: 1; /* Ensure the sticky element stays above other content */
-        background-color: #fff; /* Ensure background remains visible */
-        padding: 16px; /* Add padding for spacing */
-        border: 1px solid #f0f0f0; /* Optional: Add border for styling */
-        border-radius: 4px; /* Optional: Add border radius for rounded corners */
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for depth */
+    .ant-tabs-nav .ant-tabs-nav-wrap {
+        display: block;
+        text-align: center;
+    }
+    .ant-tabs-nav-list {
+        display: flex;
+        justify-content: space-between;
+
+        .ant-tabs-tab {
+            width: 33.33%;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ant-tabs-tab-btn {
+            width: 100%;
+            height: 100%;
+        }
+    }
+}
+
+@media (max-width: 576px) {
+    .job-detail {
+        padding: 10px;
+
+        .left-content,
+        .right-content {
+            padding: 10px;
+        }
     }
 }

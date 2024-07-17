@@ -1,37 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table, Button, Modal, Form, Input, Spin, Alert } from 'antd';
-import axiosInstance from '../utils/api';
-
-interface Job {
-    key: string;
-    title: string;
-    description: string;
-}
+import { useAppSelector, useAppDispatch } from '../redux/hooks';
+import { fetchServices, createService } from '../redux/reducers/servicesSlice';
 
 const Jobs: React.FC = () => {
+    const dispatch = useAppDispatch();
+    const services = useAppSelector(state => state.servicesReducer.services);
+    const loading = useAppSelector(state => state.servicesReducer.loading);
+    const error = useAppSelector(state => state.servicesReducer.error);
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [jobs, setJobs] = useState<Job[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
     const [form] = Form.useForm();
 
     useEffect(() => {
-        const fetchJobs = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                const response = await axiosInstance.get<Job[]>('/services');
-                const jobsData = response.data.map((job, index) => ({ ...job, key: String(index) }));
-                setJobs(jobsData);
-            } catch (err) {
-                setError('Failed to fetch jobs');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchJobs();
-    }, []);
+        dispatch(fetchServices());
+    }, [dispatch]);
 
     const showModal = () => {
         setIsModalVisible(true);
@@ -42,13 +24,8 @@ const Jobs: React.FC = () => {
         form.resetFields();
     };
 
-    const handleAddJob = (values: Omit<Job, 'key'>) => {
-        const newJob = {
-            key: `${jobs.length + 1}`,
-            title: values.title,
-            description: values.description,
-        };
-        setJobs([...jobs, newJob]);
+    const handleAddJob = async (values: { title: string; description: string }) => {
+        await dispatch(createService(values));
         setIsModalVisible(false);
         form.resetFields();
     };
@@ -72,15 +49,13 @@ const Jobs: React.FC = () => {
             <Button type='primary' onClick={showModal} style={{ marginBottom: 16 }}>
                 Add Job
             </Button>
-            {loading ? (
-                <div style={{ textAlign: 'center', marginTop: 20 }}>
-                    <Spin size='large' />
-                </div>
-            ) : error ? (
-                <Alert message='Error' description={error} type='error' showIcon />
-            ) : (
-                <Table columns={columns} dataSource={jobs} />
-            )}
+            <Spin spinning={loading}>
+                {error ? (
+                    <Alert message='Error' description={error} type='error' showIcon />
+                ) : (
+                    <Table columns={columns} dataSource={services} rowKey='id' />
+                )}
+            </Spin>
             <Modal
                 title='Add Job'
                 open={isModalVisible}

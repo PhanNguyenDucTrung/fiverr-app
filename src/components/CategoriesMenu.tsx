@@ -30,7 +30,6 @@ interface CategoriesMenuProps {
 const CategoriesMenu: React.FC<CategoriesMenuProps> = ({ className }) => {
     const dispatch = useAppDispatch();
     const categoriesMenu = useAppSelector(state => state.congViecReducer?.categoriesMenu) as Category[];
-    // console.log(categoriesMenu);
     const { categoryName } = useParams<{ categoryName: string }>();
     const navigate = useNavigate();
 
@@ -75,6 +74,7 @@ const CategoriesMenu: React.FC<CategoriesMenuProps> = ({ className }) => {
             <Menu.Item key={category.id}>
                 {category.subcategories.length > 0 ? (
                     <Popover
+                        zIndex={1030}
                         placement='bottom'
                         trigger='hover'
                         content={

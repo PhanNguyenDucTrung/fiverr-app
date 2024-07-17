@@ -35,7 +35,6 @@ const AdminTemplate: React.FC = () => {
         <Layout style={{ minHeight: '100vh' }}>
             <Sider trigger={null} collapsible collapsed={collapsed}>
                 <NavLink to='/'>
-                    {' '}
                     <div
                         className='logo'
                         style={{

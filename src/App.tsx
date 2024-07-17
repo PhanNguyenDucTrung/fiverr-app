@@ -19,7 +19,13 @@ import Users from './pages/Users';
 import Services from './pages/Services';
 import Orders from './pages/Orders';
 import Categories from './pages/Categories';
+
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 import './assets/scss/main.scss';
+
+// testing components
+
 function App() {
     const dispatch = useAppDispatch();
     const expiresAt = useAppSelector(state => state.authReducer.expiresAt);
@@ -38,16 +44,16 @@ function App() {
     }, [dispatch, expiresAt]);
     return (
         <Routes>
-            <Route path='' element={<Home />} />
             <Route path='*' element={<Navigate to='/' />} />
             <Route path='/' element={<MainTemplate />}>
+                <Route index element={<Home />} />
+                <Route path='/home' element={<Home />} />
                 <Route path='/register' element={<Register />} />
                 <Route path='/login' element={<Login />} />
                 <Route path='/profile' element={<Profile />} />
                 <Route path='/job-category' element={<JobCategory />} />
                 <Route path='/search/services' element={<JobList />} />
                 <Route path='/job-detail' element={<JobDetail />} />
-
                 <Route path='/categories/:categoryName' element={<JobCategory />} />
                 <Route path='/categories/:tenLoaiCongViec/:tenNhom/:tenChiTiet/:id' element={<JobList />} />
                 <Route path='/verify-email/:token' element={<EmailVerification />} />

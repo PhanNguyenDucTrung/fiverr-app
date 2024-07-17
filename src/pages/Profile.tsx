@@ -3,13 +3,11 @@ import { Card, Avatar, Typography, Divider, Skeleton, Form, Input, Button, Modal
 import { UserOutlined, EditOutlined } from '@ant-design/icons';
 import { useAppSelector, useAppDispatch } from '../redux/hooks';
 import axiosInstance from '../utils/api';
-// import { useNavigate } from 'react-router-dom';
 import { fetchUserProfile } from '../redux/reducers/authSlice';
 
 const { Title, Text } = Typography;
 
 const Profile: React.FC = () => {
-    // const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const [loading, setLoading] = useState(true);
     const [profileData, setProfileData] = useState<any>(null);

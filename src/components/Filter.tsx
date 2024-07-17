@@ -1,9 +1,6 @@
-import { Select, Switch } from 'antd';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
-const { Option } = Select;
-
-const FilterComponent = () => {
+const FilterComponent: React.FC = () => {
     const [category, setCategory] = useState<string | null>(null);
     const [service, setService] = useState<string | null>(null);
     const [seller, setSeller] = useState<string | null>(null);
@@ -19,21 +16,18 @@ const FilterComponent = () => {
         placeholder: string,
         options: { value: string; label: string }[]
     ) => (
-        <Select
-            value={value}
-            onChange={onChange}
-            placeholder={placeholder}
-            className='dropdown-toggle-select'
-            style={{ width: 200 }}>
-            <Option value='' disabled>
-                {placeholder}
-            </Option>
-            {options.map(option => (
-                <Option key={option.value} value={option.value}>
-                    {option.label}
-                </Option>
-            ))}
-        </Select>
+        <div className='custom-select'>
+            <select value={value || ''} onChange={e => onChange(e.target.value)} className='dropdown-toggle-select'>
+                <option value='' disabled>
+                    {placeholder}
+                </option>
+                {options.map(option => (
+                    <option key={option.value} value={option.value}>
+                        {option.label}
+                    </option>
+                ))}
+            </select>
+        </div>
     );
 
     return (
@@ -64,27 +58,15 @@ const FilterComponent = () => {
             <div className='toggle-buttons'>
                 <div className='toggle-button'>
                     <label>Pro Services</label>
-                    <Switch
-                        checked={proServices}
-                        onChange={checked => setProServices(checked)}
-                        style={{ marginLeft: '10px' }}
-                    />
+                    <input type='checkbox' checked={proServices} onChange={e => setProServices(e.target.checked)} />
                 </div>
                 <div className='toggle-button'>
                     <label>Local Sellers</label>
-                    <Switch
-                        checked={localSellers}
-                        onChange={checked => setLocalSellers(checked)}
-                        style={{ marginLeft: '10px' }}
-                    />
+                    <input type='checkbox' checked={localSellers} onChange={e => setLocalSellers(e.target.checked)} />
                 </div>
                 <div className='toggle-button'>
                     <label>Online Sellers</label>
-                    <Switch
-                        checked={onlineSellers}
-                        onChange={checked => setOnlineSellers(checked)}
-                        style={{ marginLeft: '10px' }}
-                    />
+                    <input type='checkbox' checked={onlineSellers} onChange={e => setOnlineSellers(e.target.checked)} />
                 </div>
             </div>
         </div>
