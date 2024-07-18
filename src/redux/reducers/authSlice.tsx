@@ -61,6 +61,8 @@ export const fetchUserProfile = createAsyncThunk('auth/fetchUserProfile', async 
         },
     });
 
+    console.log('fetchUserProfile', response.data);
+
     return response.data;
 });
 

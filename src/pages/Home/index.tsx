@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PlayCircleOutlined } from '@ant-design/icons';
-import TestimonialSlider from '../../components/TestimonialSlider';
 import VideoModal from '../../components/VideoModal';
 import CheckIcon from '../../components/CheckIcon';
+import TestimonialSlider from './TestimonialSlider';
 import PopularServiceCarousel from './PopularServiceCarousel';
 import { sellingPropositions } from './data';
 

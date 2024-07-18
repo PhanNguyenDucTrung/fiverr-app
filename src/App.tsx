@@ -6,8 +6,6 @@ import { clearToken } from './redux/reducers/authSlice';
 import MainTemplate from './templates/MainTemplate';
 import AdminTemplate from './templates/AdminTemplate';
 import Home from './pages/Home';
-import Register from './pages/Register';
-import Login from './pages/Login';
 import Profile from './pages/Profile';
 import JobCategory from './pages/JobCategory';
 import JobDetail from './pages/JobDetail';
@@ -19,6 +17,8 @@ import Users from './pages/Users';
 import Services from './pages/Services';
 import Orders from './pages/Orders';
 import Categories from './pages/Categories';
+import LoginForm from './pages/LoginForm';
+import SignUpForm from './pages/SignUpForm';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -45,11 +45,13 @@ function App() {
     return (
         <Routes>
             <Route path='*' element={<Navigate to='/' />} />
+
+            <Route path='/login' element={<LoginForm />} />
+
             <Route path='/' element={<MainTemplate />}>
                 <Route index element={<Home />} />
                 <Route path='/home' element={<Home />} />
-                <Route path='/register' element={<Register />} />
-                <Route path='/login' element={<Login />} />
+
                 <Route path='/profile' element={<Profile />} />
                 <Route path='/job-category' element={<JobCategory />} />
                 <Route path='/search/services' element={<JobList />} />
@@ -66,6 +68,11 @@ function App() {
                 <Route path='orders' element={<Orders />} />
                 <Route path='categories' element={<Categories />} />
             </Route>
+
+            {/* testing components */}
+            <Route path='/login' element={<LoginForm />} />
+            <Route path='/signup' element={<SignUpForm />} />
+            <Route path='/register' element={<SignUpForm />} />
         </Routes>
     );
 }

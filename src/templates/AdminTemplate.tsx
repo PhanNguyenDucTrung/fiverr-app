@@ -1,4 +1,4 @@
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, message } from 'antd';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../redux/hooks';
 
@@ -16,7 +16,6 @@ const { Header, Sider, Content } = Layout;
 
 const AdminTemplate: React.FC = () => {
     const role = useAppSelector(state => state.authReducer.role);
-    console.log(role);
     const [collapsed, setCollapsed] = useState(false);
     const navigate = useNavigate();
     const toggle = () => {
@@ -25,8 +24,7 @@ const AdminTemplate: React.FC = () => {
 
     useEffect(() => {
         if (role !== 'admin') {
-            console.log('redirecting');
-
+            message.error('You are not authorized to access this page');
             navigate('/');
         }
     }, [role]);

@@ -1,7 +1,6 @@
 // api.js
 import axios from 'axios';
 
-// Determine the base URL dynamically based on the environment
 const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
 const axiosInstance = axios.create({

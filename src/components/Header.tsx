@@ -59,6 +59,13 @@ const Header: React.FC<HeaderProps> = ({ isHomePage, scrollY }) => {
                     </div>
                     <nav className='fiverr-nav'>
                         <ul className='nav-items'>
+                            <li
+                                className='display-from-xl'
+                                style={{
+                                    paddingRight: '0',
+                                }}>
+                                <button className='nav-link nav-link-lang'>Fiverr Business</button>
+                            </li>
                             <li className='display-from-xl'>
                                 <button className='nav-link nav-link-lang'>
                                     <i className='fa fa-globe' aria-hidden='true'></i> English

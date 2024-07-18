@@ -72,6 +72,7 @@
             height: 80px;
             justify-content: flex-start;
             flex-wrap: nowrap;
+            padding: 0 20px;
         }
     }
 
@@ -81,13 +82,18 @@
         }
     }
 
+    .search-container {
+        button[type='submit'] {
+            height: 100%;
+        }
+    }
     button[type='submit'] {
         position: absolute;
         right: 0;
         top: 0;
-        height: 100%;
+
         padding: 10px 20px;
-        background-color: #007bff;
+        background-color: #1dbf73;
         color: #fff;
         border: none;
         border-radius: 0 5px 5px 0;
@@ -95,7 +101,7 @@
     }
 
     button[type='submit']:hover {
-        background-color: #0056b3;
+        background-color: #19a463;
     }
 }
 

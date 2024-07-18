@@ -4,13 +4,13 @@ import { popularTags } from './data';
 
 const CustomNextArrow: React.FC<any> = ({ onClick }) => (
     <div className='carousel__arrow carousel__arrow--next' onClick={onClick}>
-        <i className='fas fa-arrow-right'></i>
+        <i className='fas fa-chevron-right'></i>
     </div>
 );
 
 const CustomPrevArrow: React.FC<any> = ({ onClick }) => (
     <div className='carousel__arrow carousel__arrow--prev' onClick={onClick}>
-        <i className='fas fa-arrow-left'></i>
+        <i className='fas fa-chevron-left'></i>
     </div>
 );
 

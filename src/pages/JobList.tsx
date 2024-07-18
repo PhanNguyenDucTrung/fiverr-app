@@ -6,8 +6,8 @@ import Filter from '../components/Filter';
 import axiosInstance from '../utils/api';
 import { useAppSelector, useAppDispatch } from '../redux/hooks';
 import { fetchUserProfile } from '../redux/reducers/authSlice';
-import Login from './Login';
 import ServiceItem from '../components/ServiceItem';
+import SignUpForm from './SignUpForm';
 
 export interface Service {
     id: string;
@@ -182,12 +182,14 @@ const JobList: React.FC = () => {
                 </div>
             </div>
             <Modal
-                title='Login Required'
+                width={900}
+                style={{ padding: '0' }}
+                closable={false}
                 open={isLoginModalVisible}
                 onCancel={() => setIsLoginModalVisible(false)}
                 zIndex={10000}
                 footer={null}>
-                <Login />
+                <SignUpForm />
             </Modal>
         </div>
     );

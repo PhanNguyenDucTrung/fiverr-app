@@ -117,7 +117,7 @@ const Categories: React.FC = () => {
             </Spin>
             <Modal
                 title={editingCategory ? 'Edit Category' : 'Add Category'}
-                visible={isModalVisible}
+                open={isModalVisible}
                 onOk={handleOk}
                 onCancel={handleCancel}>
                 <Form form={form} layout='vertical'>
