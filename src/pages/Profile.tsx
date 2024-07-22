@@ -12,18 +12,22 @@ import {
     App as AntdApp,
     Row,
     Col,
+    Pagination,
+    Empty,
 } from 'antd';
-import { UserOutlined, EditOutlined } from '@ant-design/icons';
+import { UserOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { useAppSelector, useAppDispatch } from '../redux/hooks';
 import axiosInstance from '../utils/api';
 import { fetchUserProfile } from '../redux/reducers/authSlice';
 import ServiceItem from '../components/ServiceItem';
 import { Service } from '../pages/JobList';
+import { useNavigate } from 'react-router-dom';
 
 const { Title, Text } = Typography;
 
 const Profile: React.FC = () => {
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const { notification } = AntdApp.useApp();
     const [loading, setLoading] = useState(true);
     const [profileData, setProfileData] = useState<any>(null);
@@ -36,6 +40,9 @@ const Profile: React.FC = () => {
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [likedServices, setLikedServices] = useState<Service[]>([]);
+    const [associatedServices, setAssociatedServices] = useState<Service[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize] = useState(4);
 
     useEffect(() => {
         if (!profile) {
@@ -44,8 +51,18 @@ const Profile: React.FC = () => {
             setProfileData(profile);
             setLoading(false);
             setLikedServices(profile.likedServices || []);
+            fetchAssociatedServices(profile.id);
         }
     }, [profile, dispatch]);
+
+    const fetchAssociatedServices = async (userId: string) => {
+        try {
+            const response = await axiosInstance.get(`/users/${userId}/services`);
+            setAssociatedServices(response.data);
+        } catch (error) {
+            console.error('Error fetching associated services:', error);
+        }
+    };
 
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
@@ -175,6 +192,19 @@ const Profile: React.FC = () => {
 
     const isLiked = (serviceId: string) => likedServices.some(service => service.id === serviceId);
 
+    const handlePageChange = page => {
+        setCurrentPage(page);
+    };
+
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const currentServices = likedServices.slice(startIndex, endIndex);
+    const currentAssociatedServices = associatedServices.slice(startIndex, endIndex);
+
+    const handleCreateService = () => {
+        navigate('/services/new');
+    };
+
     return (
         <div className='profile-container max-width-container'>
             <Card style={{ width: '100%' }}>
@@ -252,6 +282,7 @@ const Profile: React.FC = () => {
                                     </Form.Item>
                                 )}
                             </Form>
+
                             <Divider>Update Password</Divider>
                             <Form form={form} layout='vertical' onFinish={handlePasswordUpdate}>
                                 <Form.Item
@@ -345,16 +376,73 @@ const Profile: React.FC = () => {
                         <Divider>Liked Services</Divider>
                         <div className='profile-list'>
                             <div className='profile-listing-container grid-view'>
-                                {likedServices.map((service: Service) => (
-                                    <ServiceItem
-                                        key={service.id}
-                                        service={service}
-                                        isLiked={isLiked}
-                                        handleLike={handleLike}
-                                        handleUnlike={handleUnlike}
-                                    />
-                                ))}
+                                {currentServices.length > 0 ? (
+                                    currentServices.map((service: Service) => (
+                                        <ServiceItem
+                                            key={service.id}
+                                            service={service}
+                                            isLiked={isLiked}
+                                            handleLike={handleLike}
+                                            handleUnlike={handleUnlike}
+                                        />
+                                    ))
+                                ) : (
+                                    <Empty description='No liked services available'>
+                                        <Button type='primary' onClick={handleCreateService}>
+                                            Browse Services
+                                        </Button>
+                                    </Empty>
+                                )}
                             </div>
+                            {currentServices.length > 0 && (
+                                <Pagination
+                                    current={currentPage}
+                                    pageSize={pageSize}
+                                    total={likedServices.length}
+                                    onChange={handlePageChange}
+                                    style={{ marginTop: '20px', textAlign: 'center' }}
+                                />
+                            )}
+                        </div>
+                        <Divider>
+                            Associated Services
+                            <Button
+                                type='primary'
+                                icon={<PlusOutlined />}
+                                style={{ marginLeft: '10px' }}
+                                onClick={handleCreateService}>
+                                Create
+                            </Button>
+                        </Divider>
+                        <div className='profile-list'>
+                            <div className='profile-listing-container grid-view'>
+                                {currentAssociatedServices.length > 0 ? (
+                                    currentAssociatedServices.map((service: Service) => (
+                                        <ServiceItem
+                                            key={service.id}
+                                            service={service}
+                                            isLiked={isLiked}
+                                            handleLike={handleLike}
+                                            handleUnlike={handleUnlike}
+                                        />
+                                    ))
+                                ) : (
+                                    <Empty description='No services created by you yet'>
+                                        <Button type='primary' icon={<PlusOutlined />} onClick={handleCreateService}>
+                                            Create Service
+                                        </Button>
+                                    </Empty>
+                                )}
+                            </div>
+                            {currentAssociatedServices.length > 0 && (
+                                <Pagination
+                                    current={currentPage}
+                                    pageSize={pageSize}
+                                    total={associatedServices.length}
+                                    onChange={handlePageChange}
+                                    style={{ marginTop: '20px', textAlign: 'center' }}
+                                />
+                            )}
                         </div>
                     </Col>
                 </Row>

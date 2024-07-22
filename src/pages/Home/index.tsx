@@ -1,4 +1,5 @@
-import { useState } from 'react';
+// src/pages/Home.tsx
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PlayCircleOutlined } from '@ant-design/icons';
 import VideoModal from '../../components/VideoModal';
@@ -6,16 +7,19 @@ import CheckIcon from '../../components/CheckIcon';
 import TestimonialSlider from './TestimonialSlider';
 import PopularServiceCarousel from './PopularServiceCarousel';
 import { sellingPropositions } from './data';
+import { useAppSelector, useAppDispatch } from '../../redux/hooks';
+import { setSearchTerm } from '../../redux/reducers/searchSlice'; // Import the setSearchTerm action
 
 const Home = () => {
     const navigate = useNavigate();
     const [modalIsOpen, setModalIsOpen] = useState(false);
-    const [searchTerm, setSearchTerm] = useState('');
+    const searchTerm = useAppSelector(state => state.searchReducer.searchTerm); // Get the search term from Redux state
+    const dispatch = useAppDispatch();
     const [currentVideoUrl, setCurrentVideoUrl] = useState('');
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        navigate(`/result/?search=${encodeURIComponent(searchTerm)}`);
+        navigate(`/search/services?query=${encodeURIComponent(searchTerm)}`);
     };
 
     const openModal = videoUrl => {
@@ -35,13 +39,7 @@ const Home = () => {
                     <div className='header'>
                         <h1 className='header-title'>
                             Find the perfect
-                            <em
-                                style={{
-                                    fontFamily: 'Playfair Display, serif',
-                                }}>
-                                {' '}
-                                freelance{' '}
-                            </em>
+                            <em style={{ fontFamily: 'Playfair Display, serif' }}> freelance </em>
                             service for your business
                         </h1>
 
@@ -50,7 +48,7 @@ const Home = () => {
                                 type='text'
                                 placeholder='Search for any service...'
                                 value={searchTerm}
-                                onChange={e => setSearchTerm(e.target.value)}
+                                onChange={e => dispatch(setSearchTerm(e.target.value))} // Update search term in Redux state
                             />
                             <button type='submit' onClick={handleSubmit}>
                                 <i className='fa fa-search'></i>
@@ -198,11 +196,7 @@ const Home = () => {
                                 justifyContent: 'center',
                             }}>
                             <img
-                                style={{
-                                    display: 'block',
-                                    width: '100%',
-                                    cursor: 'pointer',
-                                }}
+                                style={{ display: 'block', width: '100%', cursor: 'pointer' }}
                                 src='https://fiverr-res.cloudinary.com/q_auto,f_auto,w_700,dpr_2.0/v1/attachments/generic_asset/asset/089e3bb9352f90802ad07ad9f6a4a450-1599517407052/selling-proposition-still-1400-x1.png'
                                 alt=''
                                 onClick={() =>
@@ -212,12 +206,7 @@ const Home = () => {
                                 }
                             />
                             <button className='play-button' onClick={() => setModalIsOpen(true)}>
-                                <PlayCircleOutlined
-                                    style={{
-                                        color: 'white',
-                                        fontSize: 50,
-                                    }}
-                                />
+                                <PlayCircleOutlined style={{ color: 'white', fontSize: 50 }} />
                             </button>
                         </div>
                         <VideoModal isOpen={modalIsOpen} onRequestClose={closeModal} videoUrl={currentVideoUrl} />
@@ -337,4 +326,5 @@ const Home = () => {
         </>
     );
 };
+
 export default Home;

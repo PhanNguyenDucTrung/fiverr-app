@@ -1,6 +1,35 @@
 import { Card, Avatar, Rate, Divider, Row, Col, Typography, Badge, Button, Tabs } from 'antd';
 import { UserOutlined, TrophyOutlined } from '@ant-design/icons';
 import type { TabsProps } from 'antd';
+import { CheckOutlined } from '@ant-design/icons';
+const basicItems = ['10-day delivery', '2 Revisions', 'Up to 1,500 words', 'Outline', 'Topic research'];
+
+const standardItems = [
+    '20-day delivery',
+    '5 Revisions',
+    'Up to 5,000 words',
+    'Outline',
+    'Topic research',
+    'Illustrations',
+];
+
+const premiumItems = [
+    '30-day delivery',
+    'Unlimited Revisions',
+    'Up to 10,000 words',
+    'Outline',
+    'Topic research',
+    'Illustrations',
+    'Marketing material',
+];
+const renderListItems = items => {
+    return items.map((item, index) => (
+        <li key={index}>
+            <CheckOutlined style={{ marginRight: '8px' }} />
+            {item}
+        </li>
+    ));
+};
 
 const { Title, Text } = Typography;
 
@@ -18,13 +47,7 @@ const JobDetail = () => {
                         <Text className='pricing-price'>$250</Text>
                     </div>
                     <Text>
-                        <ul>
-                            <li>10-day delivery</li>
-                            <li>2 Revisions</li>
-                            <li>Up to 1,500 words</li>
-                            <li>Outline</li>
-                            <li>Topic research</li>
-                        </ul>
+                        <ul>{renderListItems(basicItems)}</ul>
                     </Text>
                     <Button type='primary' block className='pricing-button'>
                         Continue
@@ -45,14 +68,7 @@ const JobDetail = () => {
                         <Text className='pricing-price'>$500</Text>
                     </div>
                     <Text>
-                        <ul>
-                            <li>20-day delivery</li>
-                            <li>5 Revisions</li>
-                            <li>Up to 5,000 words</li>
-                            <li>Outline</li>
-                            <li>Topic research</li>
-                            <li>Illustrations</li>
-                        </ul>
+                        <ul>{renderListItems(standardItems)}</ul>
                     </Text>
                     <Button type='primary' block className='pricing-button'>
                         Continue
@@ -73,15 +89,7 @@ const JobDetail = () => {
                         <Text className='pricing-price'>$1000</Text>
                     </div>
                     <Text>
-                        <ul>
-                            <li>30-day delivery</li>
-                            <li>Unlimited Revisions</li>
-                            <li>Up to 10,000 words</li>
-                            <li>Outline</li>
-                            <li>Topic research</li>
-                            <li>Illustrations</li>
-                            <li>Marketing material</li>
-                        </ul>
+                        <ul>{renderListItems(premiumItems)}</ul>
                     </Text>
                     <Button type='primary' block className='pricing-button'>
                         Continue

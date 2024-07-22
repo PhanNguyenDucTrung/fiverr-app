@@ -155,8 +155,7 @@
     position: relative;
     cursor: pointer;
 
-    &:hover .job-item__content h3,
-    &:hover .job-item__content p {
+    &:hover .job-item__content h3 {
         text-decoration: underline;
     }
 }

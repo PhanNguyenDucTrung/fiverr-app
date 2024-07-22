@@ -1,10 +1,14 @@
-import { NavLink } from 'react-router-dom';
-import { FormEvent, useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { fetchUserProfile } from '../redux/reducers/authSlice';
-import { useNavigate } from 'react-router-dom';
-import { Avatar } from 'antd'; // Import thẻ Avatar của Ant Design
-import hamburger from '../assets/hamburger.svg';
+// src/components/Header.tsx
+import React, { FormEvent, useEffect } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { Avatar, Dropdown, Space } from 'antd';
+import { UserOutlined, LogoutOutlined, BellOutlined, ProfileOutlined } from '@ant-design/icons';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { fetchUserProfile, clearToken } from '../../redux/reducers/authSlice';
+import { useSearchHandler } from '../../utils/seachHandler';
+import { setSearchTerm } from '../../redux/reducers/searchSlice';
+import hamburger from '../../assets/hamburger.svg';
+import Logo from './Logo';
 
 interface HeaderProps {
     isHomePage: boolean;
@@ -14,13 +18,14 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ isHomePage, scrollY }) => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const [searchTerm, setSearchTerm] = useState('');
-    const { token } = useAppSelector(state => state.authReducer);
-    const profilePicture = useAppSelector(state => state.authReducer.profile?.profilePicture); // url to profile picture
+    const searchTerm = useAppSelector(state => state.searchReducer.searchTerm); // Get the search term from Redux state
+    const { token, profile } = useAppSelector(state => state.authReducer);
+    const profilePicture = profile?.profilePicture;
+    const handleSearch = useSearchHandler();
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        navigate(`/search/services?query=${encodeURIComponent(searchTerm)}`);
+        handleSearch(searchTerm);
     };
 
     useEffect(() => {
@@ -29,16 +34,38 @@ const Header: React.FC<HeaderProps> = ({ isHomePage, scrollY }) => {
         }
     }, [token, dispatch]);
 
+    const handleSignOut = () => {
+        dispatch(clearToken());
+        navigate('/login');
+    };
+
+    const menuItems = [
+        {
+            key: 'profile',
+            label: 'View Profile',
+            icon: <ProfileOutlined />,
+            onClick: () => navigate('/profile'),
+        },
+        {
+            key: 'notifications',
+            label: 'Notifications',
+            icon: <BellOutlined />,
+        },
+        {
+            key: 'signout',
+            label: 'Sign Out',
+            icon: <LogoutOutlined />,
+            onClick: handleSignOut,
+        },
+    ];
+
     return (
         <div className={`header-wrapper ${isHomePage ? (scrollY > 200 ? 'scrolled' : 'home') : 'default'}`}>
             <div className='header-row-wrapper'>
                 <div className='max-width-container header-row'>
                     <button
                         type='button'
-                        style={{
-                            backgroundColor: 'transparent',
-                            border: 'none',
-                        }}
+                        style={{ backgroundColor: 'transparent', border: 'none' }}
                         className='btn-navicon'>
                         <img src={hamburger} alt='menu' />
                     </button>
@@ -51,7 +78,7 @@ const Header: React.FC<HeaderProps> = ({ isHomePage, scrollY }) => {
                                 type='text'
                                 placeholder='Search for any service...'
                                 value={searchTerm}
-                                onChange={e => setSearchTerm(e.target.value)}
+                                onChange={e => dispatch(setSearchTerm(e.target.value))} // Update search term in Redux state
                                 aria-label='Search services'
                             />
                             <button type='submit'>
@@ -61,11 +88,7 @@ const Header: React.FC<HeaderProps> = ({ isHomePage, scrollY }) => {
                     </div>
                     <nav className='fiverr-nav'>
                         <ul className='nav-items'>
-                            <li
-                                className='display-from-xl'
-                                style={{
-                                    paddingRight: '0',
-                                }}>
+                            <li className='display-from-xl' style={{ paddingRight: '0' }}>
                                 <button className='nav-link nav-link-lang'>Fiverr Business</button>
                             </li>
                             <li className='display-from-xl'>
@@ -80,9 +103,16 @@ const Header: React.FC<HeaderProps> = ({ isHomePage, scrollY }) => {
                             </li>
                             {token ? (
                                 <li>
-                                    <NavLink to='/profile' className='nav-link'>
-                                        <Avatar src={profilePicture} alt='profile' />
-                                    </NavLink>
+                                    <Dropdown menu={{ items: menuItems }} trigger={['click']} placement='bottom'>
+                                        <Space>
+                                            <Avatar
+                                                src={profilePicture}
+                                                alt='profile'
+                                                icon={<UserOutlined />}
+                                                style={{ cursor: 'pointer' }}
+                                            />
+                                        </Space>
+                                    </Dropdown>
                                 </li>
                             ) : (
                                 <>
@@ -105,16 +135,5 @@ const Header: React.FC<HeaderProps> = ({ isHomePage, scrollY }) => {
         </div>
     );
 };
-
-const Logo: React.FC<{ isHomePage: boolean; scrollY: number }> = ({ isHomePage, scrollY }) => (
-    <svg width='89' height='27' viewBox='0 0 89 27' xmlns='http://www.w3.org/2000/svg'>
-        <g style={{ fill: isHomePage && scrollY <= 200 ? '#fff' : '#404145' }}>
-            <path d='m81.6 13.1h-3.1c-2 0-3.1 1.5-3.1 4.1v9.3h-6v-13.4h-2.5c-2 0-3.1 1.5-3.1 4.1v9.3h-6v-18.4h6v2.8c1-2.2 2.3-2.8 4.3-2.8h7.3v2.8c1-2.2 2.3-2.8 4.3-2.8h2zm-25.2 5.6h-12.4c.3 2.1 1.6 3.2 3.7 3.2 1.6 0 2.7-.7 3.1-1.8l5.3 1.5c-1.3 3.2-4.5 5.1-8.4 5.1-6.5 0-9.5-5.1-9.5-9.5 0-4.3 2.6-9.4 9.1-9.4 6.9 0 9.2 5.2 9.2 9.1 0 .9 0 1.4-.1 1.8zm-5.7-3.5c-.1-1.6-1.3-3-3.3-3-1.9 0-3 .8-3.4 3zm-22.9 11.3h5.2l6.6-18.3h-6l-3.2 10.7-3.2-10.8h-6zm-24.4 0h5.9v-13.4h5.7v13.4h5.9v-18.4h-11.6v-1.1c0-1.2.9-2 2.2-2h3.5v-5h-4.4c-4.3 0-7.2 2.7-7.2 6.6v1.5h-3.4v5h3.4z'></path>
-        </g>
-        <g fill='#1dbf73'>
-            <path d='m85.3 27c2 0 3.7-1.7 3.7-3.7s-1.7-3.7-3.7-3.7-3.7 1.7-3.7 3.7 1.7 3.7 3.7 3.7z'></path>
-        </g>
-    </svg>
-);
 
 export default Header;
