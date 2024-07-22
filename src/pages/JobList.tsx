@@ -1,7 +1,6 @@
-// src/pages/JobList.tsx
 import React, { useEffect, useState, useCallback } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
-import { Skeleton, Modal, message } from 'antd';
+import { Skeleton, Modal, App as AntdApp } from 'antd';
 import Filter from '../components/Filter';
 import axiosInstance from '../utils/api';
 import { useAppSelector, useAppDispatch } from '../redux/hooks';
@@ -34,6 +33,8 @@ const JobList: React.FC = () => {
     const [isLoginModalVisible, setIsLoginModalVisible] = useState(false);
     const token = useAppSelector(state => state.authReducer.token);
     const profile = useAppSelector(state => state.authReducer.profile);
+
+    const { message } = AntdApp.useApp();
 
     const fetchServicesBySearch = useCallback(async (searchTerm: string) => {
         try {

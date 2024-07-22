@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { clearToken } from './redux/reducers/authSlice';
@@ -25,6 +26,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import './assets/scss/main.scss';
 
 // testing components
+import ServiceUpload from './pages/ServiceUpload';
 
 function App() {
     const dispatch = useAppDispatch();
@@ -69,10 +71,12 @@ function App() {
                 <Route path='categories' element={<Categories />} />
             </Route>
 
-            {/* testing components */}
             <Route path='/login' element={<LoginForm />} />
             <Route path='/signup' element={<SignUpForm />} />
             <Route path='/register' element={<SignUpForm />} />
+
+            <Route path='/services/new' element={<ServiceUpload />} />
+            <Route path='/services/edit/:serviceId' element={<ServiceUpload />} />
         </Routes>
     );
 }

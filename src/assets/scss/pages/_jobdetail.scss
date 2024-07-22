@@ -14,18 +14,17 @@
 
     .right-content {
         flex: 1;
-        position: relative; /* Ensure the container's position is relative for sticky to work */
-
+        position: relative;
         .sticky-card {
-            position: -webkit-sticky; /* For Safari */
+            position: -webkit-sticky;
             position: sticky;
-            top: 20px; /* Adjust the top offset as needed */
-            z-index: 1; /* Ensure the sticky element stays above other content */
-            background-color: #fff; /* Ensure background remains visible */
-            padding: 16px; /* Add padding for spacing */
-            border: 1px solid #f0f0f0; /* Optional: Add border for styling */
-            border-radius: 4px; /* Optional: Add border radius for rounded corners */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for depth */
+            top: 20px;
+            z-index: 1;
+            background-color: #fff;
+            padding: 16px;
+            border: 1px solid #f0f0f0;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .pricing-title {

@@ -20,7 +20,6 @@ const congViecSlice = createSlice({
     initialState: {
         categoryDetails: null,
         categoriesMenu: [],
-        congViecs: [],
     },
     reducers: {},
     extraReducers: builder => {

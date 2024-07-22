@@ -3,6 +3,7 @@ import { FormEvent, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchUserProfile } from '../redux/reducers/authSlice';
 import { useNavigate } from 'react-router-dom';
+import { Avatar } from 'antd'; // Import thẻ Avatar của Ant Design
 import hamburger from '../assets/hamburger.svg';
 
 interface HeaderProps {
@@ -15,6 +16,7 @@ const Header: React.FC<HeaderProps> = ({ isHomePage, scrollY }) => {
     const dispatch = useAppDispatch();
     const [searchTerm, setSearchTerm] = useState('');
     const { token } = useAppSelector(state => state.authReducer);
+    const profilePicture = useAppSelector(state => state.authReducer.profile?.profilePicture); // url to profile picture
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
@@ -76,16 +78,26 @@ const Header: React.FC<HeaderProps> = ({ isHomePage, scrollY }) => {
                                     Become a Seller
                                 </NavLink>
                             </li>
-                            <li className='display-from-md'>
-                                <NavLink to='/login' className='nav-link'>
-                                    Sign in
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink to='/register' className='nav-link nav-link-join'>
-                                    Join
-                                </NavLink>
-                            </li>
+                            {token ? (
+                                <li>
+                                    <NavLink to='/profile' className='nav-link'>
+                                        <Avatar src={profilePicture} alt='profile' />
+                                    </NavLink>
+                                </li>
+                            ) : (
+                                <>
+                                    <li className='display-from-md'>
+                                        <NavLink to='/login' className='nav-link'>
+                                            Sign in
+                                        </NavLink>
+                                    </li>
+                                    <li>
+                                        <NavLink to='/register' className='nav-link nav-link-join'>
+                                            Join
+                                        </NavLink>
+                                    </li>
+                                </>
+                            )}
                         </ul>
                     </nav>
                 </div>

@@ -42,7 +42,7 @@ const JobCategory: React.FC = () => {
     }, [categoryName, categoriesMenu, dispatch]);
 
     if (!categoryDetails) {
-        return <Spin />;
+        return <Spin fullscreen size={'large'} />;
     }
 
     const { name, subcategories } = categoryDetails;

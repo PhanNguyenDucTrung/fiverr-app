@@ -1,10 +1,14 @@
-import { useEffect } from 'react';
+import React, { useEffect, useRef, forwardRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchCategoriesMenu, fetchSubcategories } from '../redux/reducers/congViecSlice';
 import { Menu, Popover } from 'antd';
-import { NavLink, useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, NavLinkProps, NavLink as RouterNavLink } from 'react-router-dom';
 import Masonry from 'react-masonry-css';
 import { ConfigProvider } from 'antd';
+
+// Define the props and ref types for NavLink
+type Ref = HTMLAnchorElement;
+const NavLink = forwardRef<Ref, NavLinkProps>((props, ref) => <RouterNavLink ref={ref} {...props} />);
 
 type ChildCategory = {
     id: string;
@@ -29,6 +33,7 @@ interface CategoriesMenuProps {
 
 const CategoriesMenu: React.FC<CategoriesMenuProps> = ({ className }) => {
     const dispatch = useAppDispatch();
+    const menuRef = useRef<HTMLDivElement | null>(null);
     const categoriesMenu = useAppSelector(state => state.congViecReducer?.categoriesMenu) as Category[];
     const { categoryName } = useParams<{ categoryName: string }>();
     const navigate = useNavigate();
@@ -50,15 +55,15 @@ const CategoriesMenu: React.FC<CategoriesMenuProps> = ({ className }) => {
         }
     }, [categoryName, categoriesMenu, dispatch, navigate]);
 
-    const renderSubmenuContent = (subcategory: Subcategory, categoryName) => (
+    const renderSubmenuContent = (subcategory: Subcategory, categoryName: string) => (
         <div key={`${categoryName}-${subcategory.id}`}>
             <h3 style={{ marginBottom: '8px' }}>{subcategory.name}</h3>
             {subcategory.childCategories.map(childCategory => (
                 <NavLink
                     style={{ display: 'block', marginBottom: '8px' }}
                     key={childCategory.id}
-                    to={`/categories/${categoryName?.toLowerCase().replace(/\s/g, '-')}/${subcategory.name
-                        ?.toLowerCase()
+                    to={`/categories/${categoryName.toLowerCase().replace(/\s/g, '-')}/${subcategory.name
+                        .toLowerCase()
                         .replace(/\s/g, '-')}/${childCategory.name.toLowerCase().replace(/\s/g, '-')}/${
                         childCategory.id
                     }`}
@@ -69,48 +74,40 @@ const CategoriesMenu: React.FC<CategoriesMenuProps> = ({ className }) => {
         </div>
     );
 
-    const renderMenuItems = () =>
-        categoriesMenu.map(category => (
-            <Menu.Item key={category.id}>
-                {category.subcategories.length > 0 ? (
-                    <Popover
-                        zIndex={1030}
-                        placement='bottom'
-                        trigger='hover'
-                        content={
-                            <Masonry
-                                breakpointCols={{ default: 4, 1100: 3, 700: 2, 500: 1 }}
-                                className='masonry-grid'
-                                columnClassName='masonry-grid_column'>
-                                {category.subcategories.map(subcategory => (
-                                    <div key={subcategory.id} className='masonry-item'>
-                                        {renderSubmenuContent(subcategory, category.name)}
-                                    </div>
-                                ))}
-                            </Masonry>
-                        }>
-                        <div>
-                            <NavLink
-                                to={`/categories/${category.name.toLowerCase().replace(/\s/g, '-')}`}
-                                className='menu-item-link'>
-                                {category.name}
-                            </NavLink>
+    const transformCategoriesToMenuItems = (categories: Category[]) => {
+        return categories.map(category => {
+            const subcategoriesContent = (
+                <Masonry
+                    breakpointCols={{ default: 4, 1100: 3, 700: 2, 500: 1 }}
+                    className='masonry-grid'
+                    columnClassName='masonry-grid_column'>
+                    {category.subcategories.map(subcategory => (
+                        <div key={subcategory.id} className='masonry-item'>
+                            {renderSubmenuContent(subcategory, category.name)}
                         </div>
-                    </Popover>
-                ) : (
-                    <div>
+                    ))}
+                </Masonry>
+            );
+
+            return {
+                key: category.id,
+                label: (
+                    <Popover zIndex={1030} placement='bottom' trigger='hover' content={subcategoriesContent}>
                         <NavLink
                             to={`/categories/${category.name.toLowerCase().replace(/\s/g, '-')}`}
                             className='menu-item-link'>
                             {category.name}
                         </NavLink>
-                    </div>
-                )}
-            </Menu.Item>
-        ));
+                    </Popover>
+                ),
+            };
+        });
+    };
+
+    const menuItems = transformCategoriesToMenuItems(categoriesMenu);
 
     return (
-        <div className={`categories-menu ${className}`}>
+        <div className={`categories-menu ${className}`} ref={menuRef}>
             <ConfigProvider
                 theme={{
                     components: {
@@ -126,7 +123,7 @@ const CategoriesMenu: React.FC<CategoriesMenuProps> = ({ className }) => {
                     },
                 }}>
                 <div className='max-width-container'>
-                    <Menu mode='horizontal'>{renderMenuItems()}</Menu>
+                    <Menu mode='horizontal' items={menuItems} />
                 </div>
             </ConfigProvider>
         </div>

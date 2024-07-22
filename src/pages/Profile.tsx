@@ -1,14 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Avatar, Typography, Divider, Skeleton, Form, Input, Button, Modal, notification } from 'antd';
+import {
+    Card,
+    Avatar,
+    Typography,
+    Divider,
+    Skeleton,
+    Form,
+    Input,
+    Button,
+    Modal,
+    App as AntdApp,
+    Row,
+    Col,
+} from 'antd';
 import { UserOutlined, EditOutlined } from '@ant-design/icons';
 import { useAppSelector, useAppDispatch } from '../redux/hooks';
 import axiosInstance from '../utils/api';
 import { fetchUserProfile } from '../redux/reducers/authSlice';
+import ServiceItem from '../components/ServiceItem';
+import { Service } from '../pages/JobList';
 
 const { Title, Text } = Typography;
 
 const Profile: React.FC = () => {
     const dispatch = useAppDispatch();
+    const { notification } = AntdApp.useApp();
     const [loading, setLoading] = useState(true);
     const [profileData, setProfileData] = useState<any>(null);
     const [passwordData, setPasswordData] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
@@ -19,26 +35,17 @@ const Profile: React.FC = () => {
     const [isAvatarModalVisible, setIsAvatarModalVisible] = useState(false);
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [likedServices, setLikedServices] = useState<Service[]>([]);
 
     useEffect(() => {
         if (!profile) {
             dispatch(fetchUserProfile());
-        }
-        const fetchProfileData = () => {
-            const fakeProfile = {
-                name: 'John Doe',
-                role: 'Frontend Developer',
-                email: 'john.doe@example.com',
-                address: 'New York, USA',
-                phone: '(123) 456-7890',
-                ...profile,
-            };
-            setProfileData(fakeProfile);
+        } else {
+            setProfileData(profile);
             setLoading(false);
-        };
-
-        setTimeout(fetchProfileData, 500);
-    }, [profile]);
+            setLikedServices(profile.likedServices || []);
+        }
+    }, [profile, dispatch]);
 
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
@@ -48,7 +55,7 @@ const Profile: React.FC = () => {
         form.validateFields()
             .then(values => {
                 console.log('Password data:', values);
-                // Add fake password update logic here
+                // Add password update logic here
             })
             .catch(errorInfo => {
                 console.log('Validation failed:', errorInfo);
@@ -66,8 +73,9 @@ const Profile: React.FC = () => {
                 setIsEditing(false);
                 notification.success({
                     message: 'Profile updated successfully',
+                    description: 'Your profile information has been updated.',
                 });
-                // Add fake save profile logic here
+                // Add save profile logic here
             })
             .catch(errorInfo => {
                 console.log('Validation failed:', errorInfo);
@@ -82,6 +90,7 @@ const Profile: React.FC = () => {
         setIsModalVisible(false);
         notification.success({
             message: 'Account deleted successfully',
+            description: 'Your account has been deleted.',
         });
     };
 
@@ -136,170 +145,219 @@ const Profile: React.FC = () => {
         setSelectedFile(null);
     };
 
+    const handleLike = async (serviceId: string) => {
+        try {
+            const response = await axiosInstance.post(`/services/${serviceId}/like`);
+            if (response.status === 200) {
+                notification.success({
+                    message: 'Service liked successfully',
+                });
+                setLikedServices(prev => [...prev, response.data.service]);
+            }
+        } catch (error) {
+            console.error('Error liking service:', error);
+        }
+    };
+
+    const handleUnlike = async (serviceId: string) => {
+        try {
+            const response = await axiosInstance.post(`/services/${serviceId}/unlike`);
+            if (response.status === 200) {
+                notification.success({
+                    message: 'Service unliked successfully',
+                });
+                setLikedServices(prev => prev.filter(service => service.id !== serviceId));
+            }
+        } catch (error) {
+            console.error('Error unliking service:', error);
+        }
+    };
+
+    const isLiked = (serviceId: string) => likedServices.some(service => service.id === serviceId);
+
     return (
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
-            <Card style={{ maxWidth: '500px', width: '100%' }}>
-                <Skeleton loading={loading} avatar active>
-                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
-                        <div style={{ position: 'relative' }}>
-                            <Avatar size={100} src={profileData?.profilePicture} icon={<UserOutlined />}></Avatar>
-                            <Button
-                                type='primary'
-                                shape='circle'
-                                icon={<EditOutlined />}
-                                style={{
-                                    position: 'absolute',
-                                    bottom: 10,
-                                    right: 10,
-                                    transform: 'translate(50%, 50%)',
-                                }}
-                                onClick={showAvatarModal}
-                            />
-                        </div>
-                    </div>
-                    <div style={{ textAlign: 'center', marginBottom: 20 }}>
-                        {profileData && (
-                            <>
-                                <Title level={4}>{profileData.name}</Title>
-                                <Text type='secondary'>{profileData.role}</Text>
-                            </>
-                        )}
-                    </div>
-                    <Divider>Thông tin cá nhân</Divider>
-                    <Form form={form} layout='vertical' initialValues={profileData}>
-                        <Form.Item name='name' label='Tên'>
-                            {isEditing ? (
-                                <Input defaultValue={profileData?.username} />
-                            ) : (
-                                <Text>{profileData?.username}</Text>
-                            )}
-                        </Form.Item>
-                        <Form.Item name='email' label='Email'>
-                            {isEditing ? (
-                                <Input defaultValue={profileData?.email} />
-                            ) : (
-                                <Text>{profileData?.email}</Text>
-                            )}
-                        </Form.Item>
-                        <Form.Item name='address' label='Địa chỉ'>
-                            {isEditing ? (
-                                <Input defaultValue={profileData?.address} />
-                            ) : (
-                                <Text>{profileData?.address}</Text>
-                            )}
-                        </Form.Item>
-                        <Form.Item name='phone' label='Số điện thoại'>
-                            {isEditing ? (
-                                <Input defaultValue={profileData?.phone} />
-                            ) : (
-                                <Text>{profileData?.phone}</Text>
-                            )}
-                        </Form.Item>
-                        {isEditing ? (
-                            <Form.Item>
-                                <Button type='primary' onClick={handleSaveProfile}>
-                                    Save Profile
-                                </Button>
-                                <Button style={{ marginLeft: '10px' }} onClick={() => setIsEditing(false)}>
-                                    Cancel
-                                </Button>
-                            </Form.Item>
-                        ) : (
-                            <Form.Item>
-                                <Button type='primary' onClick={handleEditProfile}>
-                                    Edit Profile
-                                </Button>
-                            </Form.Item>
-                        )}
-                    </Form>
-                    <Divider>Cập nhật mật khẩu</Divider>
-                    <Form form={form} layout='vertical' onFinish={handlePasswordUpdate}>
-                        <Form.Item
-                            name='currentPassword'
-                            label='Mật khẩu hiện tại'
-                            rules={[{ required: true, message: 'Vui lòng nhập mật khẩu hiện tại!' }]}>
-                            <Input.Password
-                                name='currentPassword'
-                                value={passwordData.currentPassword}
-                                onChange={handlePasswordChange}
-                            />
-                        </Form.Item>
-                        <Form.Item
-                            name='newPassword'
-                            label='Mật khẩu mới'
-                            rules={[{ required: true, message: 'Vui lòng nhập mật khẩu mới!' }]}>
-                            <Input.Password
-                                name='newPassword'
-                                value={passwordData.newPassword}
-                                onChange={handlePasswordChange}
-                            />
-                        </Form.Item>
-                        <Form.Item
-                            name='confirmPassword'
-                            label='Nhập lại mật khẩu mới'
-                            rules={[
-                                { required: true, message: 'Vui lòng nhập lại mật khẩu mới!' },
-                                ({ getFieldValue }) => ({
-                                    validator(_, value) {
-                                        if (!value || getFieldValue('newPassword') === value) {
-                                            return Promise.resolve();
-                                        }
-                                        return Promise.reject(new Error('Mật khẩu nhập lại không khớp!'));
-                                    },
-                                }),
-                            ]}>
-                            <Input.Password
-                                name='confirmPassword'
-                                value={passwordData.confirmPassword}
-                                onChange={handlePasswordChange}
-                            />
-                        </Form.Item>
-                        <Form.Item>
-                            <Button type='primary' htmlType='submit'>
-                                Cập nhật mật khẩu
+        <div className='profile-container max-width-container'>
+            <Card style={{ width: '100%' }}>
+                <Row gutter={[16, 16]}>
+                    <Col xs={24} md={12} xl={8}>
+                        <Skeleton loading={loading} avatar active>
+                            <div className='profile-avatar-container'>
+                                <div className='avatar-wrapper'>
+                                    <Avatar
+                                        className='profile-avatar'
+                                        src={profileData?.profilePicture}
+                                        icon={<UserOutlined />}
+                                    />
+                                    <Button
+                                        className='edit-avatar-button'
+                                        type='primary'
+                                        shape='circle'
+                                        icon={<EditOutlined />}
+                                        onClick={showAvatarModal}
+                                    />
+                                </div>
+                            </div>
+                            <div style={{ textAlign: 'center', marginBottom: 20 }}>
+                                {profileData && (
+                                    <>
+                                        <Title level={4}>{profileData.username}</Title>
+                                        <Text type='secondary'>{profileData.role}</Text>
+                                    </>
+                                )}
+                            </div>
+                            <Divider>Personal Information</Divider>
+                            <Form form={form} layout='vertical' initialValues={profileData}>
+                                <Form.Item name='name' label='Name'>
+                                    {isEditing ? (
+                                        <Input defaultValue={profileData?.username} />
+                                    ) : (
+                                        <Text>{profileData?.username}</Text>
+                                    )}
+                                </Form.Item>
+                                <Form.Item name='email' label='Email'>
+                                    {isEditing ? (
+                                        <Input defaultValue={profileData?.email} />
+                                    ) : (
+                                        <Text>{profileData?.email}</Text>
+                                    )}
+                                </Form.Item>
+                                <Form.Item name='address' label='Address'>
+                                    {isEditing ? (
+                                        <Input defaultValue={profileData?.address} />
+                                    ) : (
+                                        <Text>{profileData?.address || 'No address available'}</Text>
+                                    )}
+                                </Form.Item>
+                                <Form.Item name='phone' label='Phone Number'>
+                                    {isEditing ? (
+                                        <Input defaultValue={profileData?.phone} />
+                                    ) : (
+                                        <Text>{profileData?.phone || 'No phone number available'}</Text>
+                                    )}
+                                </Form.Item>
+                                {isEditing ? (
+                                    <Form.Item>
+                                        <Button type='primary' onClick={handleSaveProfile}>
+                                            Save Profile
+                                        </Button>
+                                        <Button style={{ marginLeft: '10px' }} onClick={() => setIsEditing(false)}>
+                                            Cancel
+                                        </Button>
+                                    </Form.Item>
+                                ) : (
+                                    <Form.Item>
+                                        <Button type='primary' onClick={handleEditProfile}>
+                                            Edit Profile
+                                        </Button>
+                                    </Form.Item>
+                                )}
+                            </Form>
+                            <Divider>Update Password</Divider>
+                            <Form form={form} layout='vertical' onFinish={handlePasswordUpdate}>
+                                <Form.Item
+                                    name='currentPassword'
+                                    label='Current Password'
+                                    rules={[{ required: true, message: 'Please enter your current password!' }]}>
+                                    <Input.Password
+                                        name='currentPassword'
+                                        value={passwordData.currentPassword}
+                                        onChange={handlePasswordChange}
+                                    />
+                                </Form.Item>
+                                <Form.Item
+                                    name='newPassword'
+                                    label='New Password'
+                                    rules={[{ required: true, message: 'Please enter your new password!' }]}>
+                                    <Input.Password
+                                        name='newPassword'
+                                        value={passwordData.newPassword}
+                                        onChange={handlePasswordChange}
+                                    />
+                                </Form.Item>
+                                <Form.Item
+                                    name='confirmPassword'
+                                    label='Confirm New Password'
+                                    rules={[
+                                        { required: true, message: 'Please confirm your new password!' },
+                                        ({ getFieldValue }) => ({
+                                            validator(_, value) {
+                                                if (!value || getFieldValue('newPassword') === value) {
+                                                    return Promise.resolve();
+                                                }
+                                                return Promise.reject(new Error('The two passwords do not match!'));
+                                            },
+                                        }),
+                                    ]}>
+                                    <Input.Password
+                                        name='confirmPassword'
+                                        value={passwordData.confirmPassword}
+                                        onChange={handlePasswordChange}
+                                    />
+                                </Form.Item>
+                                <Form.Item>
+                                    <Button type='primary' htmlType='submit'>
+                                        Update Password
+                                    </Button>
+                                </Form.Item>
+                            </Form>
+                            <Divider />
+                            <Button danger onClick={handleDeleteAccount}>
+                                Delete Account
                             </Button>
-                        </Form.Item>
-                    </Form>
-                    <Divider />
-                    <Button danger onClick={handleDeleteAccount}>
-                        Delete Account
-                    </Button>
-                    <Modal
-                        title='Confirm Delete'
-                        open={isModalVisible}
-                        onOk={handleConfirmDelete}
-                        onCancel={handleCancelDelete}
-                        okText='Delete'
-                        okButtonProps={{ danger: true }}>
-                        <p>Are you sure you want to delete your account? This action cannot be undone.</p>
-                    </Modal>
-                    <Modal
-                        zIndex={10000}
-                        title='Update Avatar'
-                        open={isAvatarModalVisible}
-                        onCancel={handleAvatarModalCancel}
-                        footer={[
-                            <Button key='cancel' onClick={handleAvatarModalCancel}>
-                                Cancel
-                            </Button>,
-                            <Button key='save' type='primary' onClick={handleSaveAvatar}>
-                                Save Profile Picture
-                            </Button>,
-                        ]}>
-                        <div style={{ textAlign: 'center' }}>
-                            {avatarPreview ? (
-                                <Avatar size={128} src={avatarPreview} icon={<UserOutlined />} />
-                            ) : (
-                                <Avatar size={128} src={profileData?.avatar} icon={<UserOutlined />} />
-                            )}
-                            <input
-                                type='file'
-                                onChange={handleFileChange}
-                                style={{ display: 'block', margin: '20px auto' }}
-                            />
+                            <Modal
+                                title='Confirm Delete'
+                                open={isModalVisible}
+                                onOk={handleConfirmDelete}
+                                onCancel={handleCancelDelete}
+                                okText='Delete'
+                                okButtonProps={{ danger: true }}>
+                                <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+                            </Modal>
+                            <Modal
+                                zIndex={10000}
+                                title='Update Avatar'
+                                open={isAvatarModalVisible}
+                                onCancel={handleAvatarModalCancel}
+                                footer={[
+                                    <Button key='cancel' onClick={handleAvatarModalCancel}>
+                                        Cancel
+                                    </Button>,
+                                    <Button key='save' type='primary' onClick={handleSaveAvatar}>
+                                        Save Profile Picture
+                                    </Button>,
+                                ]}>
+                                <div style={{ textAlign: 'center' }}>
+                                    {avatarPreview ? (
+                                        <Avatar size={128} src={avatarPreview} icon={<UserOutlined />} />
+                                    ) : (
+                                        <Avatar size={128} src={profileData?.avatar} icon={<UserOutlined />} />
+                                    )}
+                                    <input
+                                        type='file'
+                                        onChange={handleFileChange}
+                                        style={{ display: 'block', margin: '20px auto' }}
+                                    />
+                                </div>
+                            </Modal>
+                        </Skeleton>
+                    </Col>
+                    <Col xs={24} md={12} xl={16}>
+                        <Divider>Liked Services</Divider>
+                        <div className='profile-list'>
+                            <div className='profile-listing-container grid-view'>
+                                {likedServices.map((service: Service) => (
+                                    <ServiceItem
+                                        key={service.id}
+                                        service={service}
+                                        isLiked={isLiked}
+                                        handleLike={handleLike}
+                                        handleUnlike={handleUnlike}
+                                    />
+                                ))}
+                            </div>
                         </div>
-                    </Modal>
-                </Skeleton>
+                    </Col>
+                </Row>
             </Card>
         </div>
     );

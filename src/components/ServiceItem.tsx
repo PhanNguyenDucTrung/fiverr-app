@@ -21,7 +21,7 @@ const ServiceItem: React.FC<ServiceItemProps> = ({ service, isLiked, handleLike,
     };
 
     const handleFavoriteClick = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
-        e.stopPropagation(); // Ngăn chặn sự kiện điều hướng khi nhấp vào nút "Add to favorites"
+        e.stopPropagation();
         if (isLiked(service.id)) {
             handleUnlike(service.id);
         } else {

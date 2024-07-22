@@ -1,10 +1,99 @@
 import { Card, Avatar, Rate, Divider, Row, Col, Typography, Badge, Button, Tabs } from 'antd';
 import { UserOutlined, TrophyOutlined } from '@ant-design/icons';
+import type { TabsProps } from 'antd';
 
 const { Title, Text } = Typography;
-const { TabPane } = Tabs;
 
 const JobDetail = () => {
+    const onChange = (_key: string) => {};
+
+    const items: TabsProps['items'] = [
+        {
+            key: '1',
+            label: 'Basic',
+            children: (
+                <>
+                    <div className='pricing-title'>
+                        <Title level={4}>Book Outline Only</Title>
+                        <Text className='pricing-price'>$250</Text>
+                    </div>
+                    <Text>
+                        <ul>
+                            <li>10-day delivery</li>
+                            <li>2 Revisions</li>
+                            <li>Up to 1,500 words</li>
+                            <li>Outline</li>
+                            <li>Topic research</li>
+                        </ul>
+                    </Text>
+                    <Button type='primary' block className='pricing-button'>
+                        Continue
+                    </Button>
+                    <Button block className='pricing-button'>
+                        Contact
+                    </Button>
+                </>
+            ),
+        },
+        {
+            key: '2',
+            label: 'Standard',
+            children: (
+                <>
+                    <div className='pricing-title'>
+                        <Title level={4}>Full Book</Title>
+                        <Text className='pricing-price'>$500</Text>
+                    </div>
+                    <Text>
+                        <ul>
+                            <li>20-day delivery</li>
+                            <li>5 Revisions</li>
+                            <li>Up to 5,000 words</li>
+                            <li>Outline</li>
+                            <li>Topic research</li>
+                            <li>Illustrations</li>
+                        </ul>
+                    </Text>
+                    <Button type='primary' block className='pricing-button'>
+                        Continue
+                    </Button>
+                    <Button block className='pricing-button'>
+                        Contact
+                    </Button>
+                </>
+            ),
+        },
+        {
+            key: '3',
+            label: 'Premium',
+            children: (
+                <>
+                    <div className='pricing-title'>
+                        <Title level={4}>Premium Package</Title>
+                        <Text className='pricing-price'>$1000</Text>
+                    </div>
+                    <Text>
+                        <ul>
+                            <li>30-day delivery</li>
+                            <li>Unlimited Revisions</li>
+                            <li>Up to 10,000 words</li>
+                            <li>Outline</li>
+                            <li>Topic research</li>
+                            <li>Illustrations</li>
+                            <li>Marketing material</li>
+                        </ul>
+                    </Text>
+                    <Button type='primary' block className='pricing-button'>
+                        Continue
+                    </Button>
+                    <Button block className='pricing-button'>
+                        Contact
+                    </Button>
+                </>
+            ),
+        },
+    ];
+
     return (
         <div style={{ padding: '20px' }} className='job-detail max-width-container'>
             <div className='left-content'>
@@ -113,74 +202,7 @@ const JobDetail = () => {
 
             <div className='right-content'>
                 <Card title='Pricing' bordered={false} className='sticky-card'>
-                    <Tabs defaultActiveKey='1'>
-                        <TabPane tab='Basic' key='1'>
-                            <div className='pricing-title'>
-                                <Title level={4}>Book Outline Only</Title>
-                                <Text className='pricing-price'>$250</Text>
-                            </div>
-                            <Text>
-                                <ul>
-                                    <li>10-day delivery</li>
-                                    <li>2 Revisions</li>
-                                    <li>Up to 1,500 words</li>
-                                    <li>Outline</li>
-                                    <li>Topic research</li>
-                                </ul>
-                            </Text>
-                            <Button type='primary' block className='pricing-button'>
-                                Continue
-                            </Button>
-                            <Button block className='pricing-button'>
-                                Contact
-                            </Button>
-                        </TabPane>
-                        <TabPane tab='Standard' key='2'>
-                            <div className='pricing-title'>
-                                <Title level={4}>Full Book</Title>
-                                <Text className='pricing-price'>$500</Text>
-                            </div>
-                            <Text>
-                                <ul>
-                                    <li>20-day delivery</li>
-                                    <li>5 Revisions</li>
-                                    <li>Up to 5,000 words</li>
-                                    <li>Outline</li>
-                                    <li>Topic research</li>
-                                    <li>Illustrations</li>
-                                </ul>
-                            </Text>
-                            <Button type='primary' block className='pricing-button'>
-                                Continue
-                            </Button>
-                            <Button block className='pricing-button'>
-                                Contact
-                            </Button>
-                        </TabPane>
-                        <TabPane tab='Premium' key='3'>
-                            <div className='pricing-title'>
-                                <Title level={4}>Premium Package</Title>
-                                <Text className='pricing-price'>$1000</Text>
-                            </div>
-                            <Text>
-                                <ul>
-                                    <li>30-day delivery</li>
-                                    <li>Unlimited Revisions</li>
-                                    <li>Up to 10,000 words</li>
-                                    <li>Outline</li>
-                                    <li>Topic research</li>
-                                    <li>Illustrations</li>
-                                    <li>Marketing material</li>
-                                </ul>
-                            </Text>
-                            <Button type='primary' block className='pricing-button'>
-                                Continue
-                            </Button>
-                            <Button block className='pricing-button'>
-                                Contact
-                            </Button>
-                        </TabPane>
-                    </Tabs>
+                    <Tabs defaultActiveKey='1' items={items} onChange={onChange} />
                 </Card>
             </div>
         </div>
