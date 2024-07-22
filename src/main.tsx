@@ -9,24 +9,11 @@ import store from './redux/store';
 
 export const history: any = createBrowserHistory();
 
-let message: any;
-let notification: any;
-let modal: any;
-
-const AppProvider: React.FC = () => {
-    const staticFunction = AntdApp.useApp();
-    message = staticFunction.message;
-    modal = staticFunction.modal;
-    notification = staticFunction.notification;
-    return null;
-};
-
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <ConfigProvider>
         <AntdApp>
             <Provider store={store}>
                 <Router history={history}>
-                    <AppProvider />
                     <App />
                 </Router>
             </Provider>
