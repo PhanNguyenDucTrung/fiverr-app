@@ -57,6 +57,7 @@ function App() {
                 <Route path='/profile' element={<Profile />} />
                 <Route path='/job-category' element={<JobCategory />} />
                 <Route path='/search/services' element={<JobList />} />
+                <Route path='/services/:serviceId' element={<JobDetail />} />
                 <Route path='/job-detail' element={<JobDetail />} />
                 <Route path='/categories/:categoryName' element={<JobCategory />} />
                 <Route path='/categories/:tenLoaiCongViec/:tenNhom/:tenChiTiet/:id' element={<JobList />} />

@@ -1,6 +1,6 @@
 const Footer = () => {
     return (
-        <footer className='d-none'>
+        <footer>
             <div className='footer-wrapper max-width-container'>
                 <div className='footer-top'>
                     <div className='footer-column'>

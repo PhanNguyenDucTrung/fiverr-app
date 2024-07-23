@@ -17,7 +17,7 @@ const ServiceItem: React.FC<ServiceItemProps> = ({ service, isLiked, handleLike,
     const [imageLoading, setImageLoading] = useState(true);
 
     const handleItemClick = () => {
-        navigate(`/job-detail/`);
+        navigate(`/services/${service.id}`);
     };
 
     const handleFavoriteClick = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {

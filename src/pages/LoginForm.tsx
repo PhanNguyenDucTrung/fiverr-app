@@ -72,7 +72,7 @@ const LoginForm: React.FC = () => {
                     <div className='signup__logo'>
                         <Link to='/'>
                             <img
-                                src='https://storage.googleapis.com/devitary-image-host.appspot.com/15846435184459982716-LogoMakr_7POjrN.png'
+                                src='https://logowik.com/content/uploads/images/fiverr-new3326.jpg'
                                 className='signup__logo-img'
                                 alt='Logo'
                             />
@@ -89,7 +89,7 @@ const LoginForm: React.FC = () => {
                     </div>
                     <div className='signup__content'>
                         <div className='signup__social-login'>
-                            <button className='signup__google-btn'>
+                            <button className='signup__google-btn' onClick={handleGoogleLogin}>
                                 <div className='signup__google-icon-wrapper'>
                                     <svg className='signup__google-icon' viewBox='0 0 533.5 544.3'>
                                         <path
@@ -110,9 +110,7 @@ const LoginForm: React.FC = () => {
                                         />
                                     </svg>
                                 </div>
-                                <span className='signup__google-text' onClick={handleGoogleLogin}>
-                                    Login with Google
-                                </span>
+                                <span className='signup__google-text'>Login with Google</span>
                             </button>
                         </div>
 

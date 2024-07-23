@@ -67,7 +67,6 @@
 }
 
 .signup__header {
-    margin-top: 2rem;
     text-align: center;
 }
 
@@ -112,11 +111,13 @@
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease-in-out;
+    cursor: pointer;
 }
 
 .signup__google-btn,
 .signup__submit-btn {
     border: 1px solid transparent;
+    cursor: pointer;
 }
 
 .signup__google-btn:hover,
@@ -166,8 +167,11 @@
     border-radius: 0.5rem;
     background-color: #f7fafc;
     border: 1px solid #e2e8f0;
-    placeholder-color: #a0aec0;
+
     font-size: 0.875rem;
+    &::placeholder {
+        color: #a0aec0;
+    }
 }
 
 .signup__input--mt {

@@ -159,7 +159,10 @@ const JobList: React.FC = () => {
                                                           shape='circle'
                                                           style={{ marginTop: 10 }}
                                                       />
-                                                      <Skeleton.Input active style={{ marginTop: 10 }} />
+                                                      <Skeleton.Input
+                                                          active
+                                                          style={{ marginTop: 10, marginLeft: 10 }}
+                                                      />
                                                   </div>
                                               </div>
                                               <div className='job-item__content'>

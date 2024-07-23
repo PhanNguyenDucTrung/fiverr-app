@@ -2,10 +2,44 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Form, Input, message } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
-
+import { signInWithPopup } from 'firebase/auth';
+import { auth, googleProvider } from '../config/firebase';
+import { useAppDispatch } from '../redux/hooks';
+import { setToken } from '../redux/reducers/authSlice';
+import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../utils/api';
 
 const SignUpForm: React.FC = () => {
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+    const handleGoogleLogin = async () => {
+        try {
+            const result = await signInWithPopup(auth, googleProvider);
+            const { user } = result;
+            const idToken = await user.getIdToken(); // Ensure this retrieves the Firebase ID token
+
+            // Send token to your backend to verify and create session
+            const response = await axiosInstance.post(
+                '/auth/google-auth',
+                {}, // data can be an empty object or any necessary payload
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${idToken}`, // Ensure this sends the correct ID token
+                    },
+                }
+            );
+
+            const data = response.data;
+            console.log('Google login data', data);
+            dispatch(setToken(data.token));
+            message.success('Login successful!');
+            navigate('/');
+        } catch (error) {
+            console.error('Error during Google login', error);
+            message.error('Login failed. Please try again.');
+        }
+    };
     const onFinish = async (values: any) => {
         try {
             const response = await axiosInstance.post('/auth/signup', values);
@@ -30,14 +64,20 @@ const SignUpForm: React.FC = () => {
                     <div className='signup__logo'>
                         <Link to='/'>
                             <img
-                                src='https://storage.googleapis.com/devitary-image-host.appspot.com/15846435184459982716-LogoMakr_7POjrN.png'
+                                src='https://logowik.com/content/uploads/images/fiverr-new3326.jpg'
                                 className='signup__logo-img'
                                 alt='Logo'
                             />
                         </Link>
                     </div>
                     <div className='signup__header'>
-                        <h1 className='signup__title'>Create your account</h1>
+                        <h1
+                            className='signup__title'
+                            style={{
+                                marginTop: '-40px',
+                            }}>
+                            Create your account
+                        </h1>
                         <p className='signup__text'>
                             Have an account?{' '}
                             <Link to='/login' className='signup__link'>
@@ -47,7 +87,7 @@ const SignUpForm: React.FC = () => {
                     </div>
                     <div className='signup__content'>
                         <div className='signup__social-login'>
-                            <button className='signup__google-btn'>
+                            <button className='signup__google-btn' onClick={handleGoogleLogin}>
                                 <div className='signup__google-icon-wrapper'>
                                     <svg className='signup__google-icon' viewBox='0 0 533.5 544.3'>
                                         <path

@@ -1,7 +1,9 @@
 import { Card, Avatar, Rate, Divider, Row, Col, Typography, Badge, Button, Tabs } from 'antd';
-import { UserOutlined, TrophyOutlined } from '@ant-design/icons';
+import { UserOutlined, TrophyOutlined, CheckOutlined } from '@ant-design/icons';
 import type { TabsProps } from 'antd';
-import { CheckOutlined } from '@ant-design/icons';
+
+const { Title, Text } = Typography;
+
 const basicItems = ['10-day delivery', '2 Revisions', 'Up to 1,500 words', 'Outline', 'Topic research'];
 
 const standardItems = [
@@ -22,6 +24,45 @@ const premiumItems = [
     'Illustrations',
     'Marketing material',
 ];
+
+const reviews = [
+    {
+        name: 'datonekidvids',
+        location: 'US, United States',
+        rating: 5,
+        date: '2 months ago',
+        review: 'Exceptional writer and teacher. He explained things to me I had never thought of, and showed me how pieces can be put together in a way I never thought possible. I also thought he was a kind lad.',
+    },
+    {
+        name: 'chevivre',
+        location: 'CA, Canada',
+        rating: 4.3,
+        date: '2 months ago',
+        review: "Amazing alpha read of my current draft. Highly informative. I would definitely consider rehiring once I'm further in/finished my first draft. Attention to detail was very high as was the quality of work done. My only concern was price, it was...",
+    },
+    {
+        name: 'songboy1965',
+        location: 'US, United States',
+        rating: 5,
+        date: '2 months ago',
+        review: 'It was a pleasure working with Michael Jaymes and I hope this is just the beginning of a long-term business relationship. He is professional and highly competent at his craft. He kept me updated on his progress and the finished project exceeded expectations. I highly recommend his services!',
+    },
+    {
+        name: 'latifa_33',
+        location: 'AE, United Arab Emirates',
+        rating: 5,
+        date: '1 month ago',
+        review: 'I worked with Michael on a small part of my project, and his feedback was extremely helpful. He provided clear and insightful suggestions that significantly improved my plotline. I definitely plan to work with him in the future. His response...',
+    },
+    {
+        name: 'yasports91',
+        location: 'US, United States',
+        rating: 5,
+        date: '1 month ago',
+        review: 'I enjoyed working with Michael again on a new project in a genre in which he specializes. He has immense knowledge and shares tremendous feedback, elevating this story.',
+    },
+];
+
 const renderListItems = items => {
     return items.map((item, index) => (
         <li key={index}>
@@ -31,7 +72,25 @@ const renderListItems = items => {
     ));
 };
 
-const { Title, Text } = Typography;
+const renderReviews = () => {
+    return reviews.map((review, index) => (
+        <div key={index}>
+            <Row gutter={16} align='middle'>
+                <Col>
+                    <Avatar size={48} icon={<UserOutlined />} />
+                </Col>
+                <Col>
+                    <Title level={5}>{review.name}</Title>
+                    <Text>{review.location}</Text>
+                    <Rate disabled defaultValue={review.rating} style={{ marginLeft: '10px' }} />
+                    <Text>{review.date}</Text>
+                </Col>
+            </Row>
+            <Text>{review.review}</Text>
+            <Divider />
+        </div>
+    ));
+};
 
 const JobDetail = () => {
     const onChange = (_key: string) => {};
@@ -205,6 +264,12 @@ const JobDetail = () => {
                         Delivery style preference: Please inform the freelancer of any preferences or concerns regarding
                         the use of AI tools in the completion and/or delivery of your order.
                     </Text>
+
+                    <Divider />
+
+                    {/* Reviews Section */}
+                    <Title level={3}>Reviews</Title>
+                    {renderReviews()}
                 </Card>
             </div>
 
