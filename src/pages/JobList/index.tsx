@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
-import { Skeleton, Modal, App as AntdApp } from 'antd';
+import { Modal, App as AntdApp } from 'antd';
 
 import axiosInstance from '../../utils/api';
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
