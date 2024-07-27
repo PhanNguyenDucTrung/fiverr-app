@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Space, Modal, Form, Input, message, Spin, Alert } from 'antd';
+import { EditOutlined, DeleteOutlined, UserAddOutlined } from '@ant-design/icons';
 import { useAppSelector, useAppDispatch } from '../redux/hooks';
 import { fetchUsers, deleteUser } from '../redux/reducers/usersSlice';
 import axiosInstance from '../utils/api';
@@ -79,8 +80,10 @@ const Users: React.FC = () => {
             key: 'actions',
             render: (_text, record) => (
                 <Space size='middle'>
-                    <Button onClick={() => handleEdit(record)}>Edit</Button>
-                    <Button danger onClick={() => handleDelete(record.id)}>
+                    <Button type='primary' icon={<EditOutlined />} onClick={() => handleEdit(record)}>
+                        Edit
+                    </Button>
+                    <Button danger icon={<DeleteOutlined />} onClick={() => handleDelete(record.id)}>
                         Delete
                     </Button>
                 </Space>
@@ -91,7 +94,11 @@ const Users: React.FC = () => {
     return (
         <div>
             <h1>Users Management</h1>
-            <Button type='primary' onClick={() => setIsModalVisible(true)} style={{ marginBottom: 16 }}>
+            <Button
+                type='primary'
+                icon={<UserAddOutlined />}
+                onClick={() => setIsModalVisible(true)}
+                style={{ marginBottom: 16 }}>
                 Add User
             </Button>
             <Spin spinning={loading}>

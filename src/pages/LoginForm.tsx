@@ -8,8 +8,11 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { setToken } from '../redux/reducers/authSlice';
 import axiosInstance from '../utils/api';
+interface LoginFormProps {
+    onLoginSuccess: () => void;
+}
 
-const LoginForm: React.FC = () => {
+const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
     const handleGoogleLogin = async () => {
         try {
             const result = await signInWithPopup(auth, googleProvider);
@@ -32,6 +35,8 @@ const LoginForm: React.FC = () => {
             console.log('Google login data', data);
             dispatch(setToken(data.token));
             message.success('Login successful!');
+            onLoginSuccess(); // Call onLoginSuccess after successful login
+
             navigate('/');
         } catch (error) {
             console.error('Error during Google login', error);

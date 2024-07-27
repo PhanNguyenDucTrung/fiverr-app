@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Skeleton, Tooltip } from 'antd';
 import { HeartOutlined, HeartFilled } from '@ant-design/icons';
 import LazyLoad from 'react-lazyload';
-import { Service } from '../pages/JobList';
+import { Service } from '../models/Service';
 import { useNavigate } from 'react-router-dom';
 
 interface ServiceItemProps {
@@ -45,7 +45,7 @@ const ServiceItem: React.FC<ServiceItemProps> = ({ service, isLiked, handleLike,
             <div className='job-item__body'>
                 <div className='seller-info'>
                     <LazyLoad height={50} once>
-                        <img src={`https://via.placeholder.com/50`} alt={service.username} />
+                        <img src={`${service?.profilePicture}`} alt={service.username} />
                     </LazyLoad>
                     <p>{service.username}</p>
                 </div>

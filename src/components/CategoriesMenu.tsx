@@ -5,27 +5,11 @@ import { Menu, Popover } from 'antd';
 import { useParams, useNavigate, NavLinkProps, NavLink as RouterNavLink } from 'react-router-dom';
 import Masonry from 'react-masonry-css';
 import { ConfigProvider } from 'antd';
+import { Category, Subcategory } from '../models/Category';
 
 // Define the props and ref types for NavLink
 type Ref = HTMLAnchorElement;
 const NavLink = forwardRef<Ref, NavLinkProps>((props, ref) => <RouterNavLink ref={ref} {...props} />);
-
-type ChildCategory = {
-    id: string;
-    name: string;
-};
-
-type Subcategory = {
-    id: string;
-    name: string;
-    childCategories: ChildCategory[];
-};
-
-type Category = {
-    id: string;
-    name: string;
-    subcategories: Subcategory[];
-};
 
 interface CategoriesMenuProps {
     className?: string;
@@ -49,8 +33,6 @@ const CategoriesMenu: React.FC<CategoriesMenuProps> = ({ className }) => {
             );
             if (category) {
                 dispatch(fetchSubcategories(category.id));
-            } else {
-                // navigate('/404');
             }
         }
     }, [categoryName, categoriesMenu, dispatch, navigate]);
@@ -112,7 +94,7 @@ const CategoriesMenu: React.FC<CategoriesMenuProps> = ({ className }) => {
                 theme={{
                     components: {
                         Popover: {
-                            zIndexPopup: 1030,
+                            zIndexPopup: 999,
                             sizePopupArrow: 0,
                         },
                         Menu: {

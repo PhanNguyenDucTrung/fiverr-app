@@ -5,7 +5,7 @@ import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import axiosInstance from '../../utils/api';
 import { fetchUserProfile } from '../../redux/reducers/authSlice';
 import ServiceItem from '../../components/ServiceItem';
-import { Service } from '../../pages/JobList';
+import { Service } from '../../models/Service';
 import { useNavigate } from 'react-router-dom';
 import ProfileDetails from './ProfileDetails';
 
@@ -18,7 +18,8 @@ const Profile: React.FC = () => {
     const { profile } = useAppSelector(state => state.authReducer);
     const [likedServices, setLikedServices] = useState<Service[]>([]);
     const [associatedServices, setAssociatedServices] = useState<Service[]>([]);
-    const [currentPage, setCurrentPage] = useState(1);
+    const [likedCurrentPage, setLikedCurrentPage] = useState(1);
+    const [associatedCurrentPage, setAssociatedCurrentPage] = useState(1);
     const [pageSize] = useState(4);
 
     useEffect(() => {
@@ -77,14 +78,21 @@ const Profile: React.FC = () => {
         return likedServices.some(service => service.id === serviceId);
     };
 
-    const handlePageChange = (page: number) => {
-        setCurrentPage(page);
+    const handleLikedPageChange = (page: number) => {
+        setLikedCurrentPage(page);
     };
 
-    const startIndex = (currentPage - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    const currentServices = likedServices.slice(startIndex, endIndex);
-    const currentAssociatedServices = associatedServices.slice(startIndex, endIndex);
+    const handleAssociatedPageChange = (page: number) => {
+        setAssociatedCurrentPage(page);
+    };
+
+    const likedStartIndex = (likedCurrentPage - 1) * pageSize;
+    const likedEndIndex = likedStartIndex + pageSize;
+    const currentLikedServices = likedServices.slice(likedStartIndex, likedEndIndex);
+
+    const associatedStartIndex = (associatedCurrentPage - 1) * pageSize;
+    const associatedEndIndex = associatedStartIndex + pageSize;
+    const currentAssociatedServices = associatedServices.slice(associatedStartIndex, associatedEndIndex);
 
     const handleCreateService = () => {
         navigate('/services/new');
@@ -101,8 +109,8 @@ const Profile: React.FC = () => {
                         <Divider>Liked Services</Divider>
                         <div className='profile-list'>
                             <div className='profile-listing-container grid-view'>
-                                {currentServices.length > 0 ? (
-                                    currentServices.map((service: Service) => (
+                                {currentLikedServices.length > 0 ? (
+                                    currentLikedServices.map((service: Service) => (
                                         <ServiceItem
                                             key={service.id}
                                             service={service}
@@ -119,12 +127,12 @@ const Profile: React.FC = () => {
                                     </Empty>
                                 )}
                             </div>
-                            {currentServices.length > 0 && (
+                            {currentLikedServices.length > 0 && (
                                 <Pagination
-                                    current={currentPage}
+                                    current={likedCurrentPage}
                                     pageSize={pageSize}
                                     total={likedServices.length}
-                                    onChange={handlePageChange}
+                                    onChange={handleLikedPageChange}
                                     style={{ marginTop: '20px', textAlign: 'center' }}
                                 />
                             )}
@@ -161,10 +169,10 @@ const Profile: React.FC = () => {
                             </div>
                             {currentAssociatedServices.length > 0 && (
                                 <Pagination
-                                    current={currentPage}
+                                    current={associatedCurrentPage}
                                     pageSize={pageSize}
                                     total={associatedServices.length}
-                                    onChange={handlePageChange}
+                                    onChange={handleAssociatedPageChange}
                                     style={{ marginTop: '20px', textAlign: 'center' }}
                                 />
                             )}

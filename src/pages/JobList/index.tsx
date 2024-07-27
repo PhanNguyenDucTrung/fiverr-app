@@ -1,30 +1,22 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { Skeleton, Modal, App as AntdApp } from 'antd';
-import Filter from '../components/Filter';
-import axiosInstance from '../utils/api';
-import { useAppSelector, useAppDispatch } from '../redux/hooks';
-import { fetchUserProfile } from '../redux/reducers/authSlice';
-import ServiceItem from '../components/ServiceItem';
-import SignUpForm from './SignUpForm';
 
-export interface Service {
-    id: string;
-    userId: string;
-    username: string;
-    title: string;
-    description: string;
-    price: number;
-    rating: number;
-    likes: number;
-    averageRating: number;
-    reviewsCount: number;
-}
+import axiosInstance from '../../utils/api';
+import { useAppSelector, useAppDispatch } from '../../redux/hooks';
+import { fetchUserProfile } from '../../redux/reducers/authSlice';
+
+import Filter from '../../components/Filter';
+import ServiceItem from '../../components/ServiceItem';
+import SignUpForm from '../SignUpForm';
+import LoadingSkeleton from './LoadingSkeleton';
+
+import { Service } from '../../models/Service';
 
 const JobList: React.FC = () => {
     const location = useLocation();
     const dispatch = useAppDispatch();
-    const [likedServices, setLikedServices] = useState<string[]>([]);
+    const [likedServices, setLikedServices] = useState<Service[]>([]);
     const queryParams = new URLSearchParams(location.search);
     const searchTerm = queryParams.get('query');
     const [services, setServices] = useState<Service[]>([]);
@@ -33,10 +25,10 @@ const JobList: React.FC = () => {
     const [isLoginModalVisible, setIsLoginModalVisible] = useState(false);
     const token = useAppSelector(state => state.authReducer.token);
     const profile = useAppSelector(state => state.authReducer.profile);
-
     const { message } = AntdApp.useApp();
 
     const fetchServicesBySearch = useCallback(async (searchTerm: string) => {
+        setLoading(true);
         try {
             const response = await axiosInstance.get<Service[]>(
                 `/services/search?query=${encodeURIComponent(searchTerm)}`
@@ -50,6 +42,7 @@ const JobList: React.FC = () => {
     }, []);
 
     const fetchServicesByCategory = useCallback(async (categoryId: string) => {
+        setLoading(true);
         try {
             const response = await axiosInstance.get<Service[]>(`/services/childcategory/${categoryId}`);
             setServices(response.data);
@@ -61,12 +54,16 @@ const JobList: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        if (!profile && token) {
+        if (token && !profile) {
             dispatch(fetchUserProfile());
-        } else {
-            setLikedServices(profile?.likedServices || []);
         }
     }, [dispatch, profile, token]);
+
+    useEffect(() => {
+        if (profile) {
+            setLikedServices(profile.likedServices || []);
+        }
+    }, [profile]);
 
     useEffect(() => {
         const pathSegments = location.pathname.split('/');
@@ -87,12 +84,15 @@ const JobList: React.FC = () => {
         try {
             const response = await axiosInstance.post(`/services/${serviceId}/like`);
             if (response.status === 200) message.success('Service liked successfully');
-            setLikedServices(prevLikedServices => [...prevLikedServices, serviceId]);
-            setServices(prevServices =>
-                prevServices.map(service =>
-                    service.id === serviceId ? { ...service, likes: service.likes + 1 } : service
-                )
-            );
+            const likedService = services.find(service => service.id === serviceId);
+            if (likedService) {
+                setLikedServices(prevLikedServices => [...prevLikedServices, likedService]);
+                setServices(prevServices =>
+                    prevServices.map(service =>
+                        service.id === serviceId ? { ...service, likes: service.likes + 1 } : service
+                    )
+                );
+            }
         } catch (error) {
             console.error('Error liking service:', error);
         }
@@ -106,7 +106,7 @@ const JobList: React.FC = () => {
         try {
             const response = await axiosInstance.post(`/services/${serviceId}/unlike`);
             if (response.status === 200) message.success('Service unliked successfully');
-            setLikedServices(prevLikedServices => prevLikedServices.filter(id => id !== serviceId));
+            setLikedServices(prevLikedServices => prevLikedServices.filter(service => service.id !== serviceId));
             setServices(prevServices =>
                 prevServices.map(service =>
                     service.id === serviceId ? { ...service, likes: service.likes - 1 } : service
@@ -117,7 +117,7 @@ const JobList: React.FC = () => {
         }
     };
 
-    const isLiked = (serviceId: string) => likedServices.includes(serviceId);
+    const isLiked = (serviceId: string) => likedServices.some(service => service.id === serviceId);
 
     return (
         <div>
@@ -144,43 +144,19 @@ const JobList: React.FC = () => {
 
                     <div className='job-list'>
                         <div className='listing-container grid-view'>
-                            {loading
-                                ? Array.from({ length: 10 }).map((_, index) => (
-                                      <div key={index} className='job-item'>
-                                          <div className='job-item__image'>
-                                              <Skeleton.Image active />
-                                          </div>
-                                          <div className='job-item__body'>
-                                              <div className='seller-info'>
-                                                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                      <Skeleton.Avatar
-                                                          active
-                                                          size={50}
-                                                          shape='circle'
-                                                          style={{ marginTop: 10 }}
-                                                      />
-                                                      <Skeleton.Input
-                                                          active
-                                                          style={{ marginTop: 10, marginLeft: 10 }}
-                                                      />
-                                                  </div>
-                                              </div>
-                                              <div className='job-item__content'>
-                                                  <Skeleton.Input active style={{ width: '100%', marginTop: 10 }} />
-                                                  <Skeleton.Input active style={{ width: '100%', marginTop: 10 }} />
-                                              </div>
-                                          </div>
-                                      </div>
-                                  ))
-                                : services.map(service => (
-                                      <ServiceItem
-                                          key={service.id}
-                                          service={service}
-                                          isLiked={isLiked}
-                                          handleLike={handleLike}
-                                          handleUnlike={handleUnlike}
-                                      />
-                                  ))}
+                            {loading ? (
+                                <LoadingSkeleton />
+                            ) : (
+                                services.map(service => (
+                                    <ServiceItem
+                                        key={service.id}
+                                        service={service}
+                                        isLiked={isLiked}
+                                        handleLike={handleLike}
+                                        handleUnlike={handleUnlike}
+                                    />
+                                ))
+                            )}
                         </div>
                     </div>
                 </div>

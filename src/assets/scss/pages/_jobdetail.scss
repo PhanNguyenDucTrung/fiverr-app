@@ -4,18 +4,24 @@
     gap: 16px;
     padding: 20px;
 
+    &--max-width {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
     @media (min-width: 768px) {
         flex-direction: row;
     }
 
-    .left-content {
+    &__left-content {
         flex: 2;
     }
 
-    .right-content {
+    &__right-content {
         flex: 1;
         position: relative;
-        .sticky-card {
+
+        &__sticky-card {
             position: -webkit-sticky;
             position: sticky;
             top: 20px;
@@ -27,23 +33,23 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .pricing-title {
+        .pricing__title {
             display: flex;
             justify-content: space-between;
             align-items: center;
+
+            h4 {
+                font-weight: 600;
+                margin-bottom: 0;
+            }
         }
 
-        .pricing-title h4 {
-            font-weight: 600;
-            margin-bottom: 0;
-        }
-
-        .pricing-price {
+        .pricing__price {
             font-weight: 600;
             font-size: 1.5em;
         }
 
-        .pricing-button {
+        .pricing__button {
             margin-top: 10px;
             font-weight: 600;
         }
@@ -53,6 +59,7 @@
         display: block;
         text-align: center;
     }
+
     .ant-tabs-nav-list {
         display: flex;
         justify-content: space-between;
@@ -70,15 +77,27 @@
             height: 100%;
         }
     }
-}
 
-@media (max-width: 576px) {
-    .job-detail {
-        padding: 10px;
+    &__collapse .ant-collapse-item {
+        border-bottom: 1px solid #d9d9d9; /* Light grey border */
+    }
 
-        .left-content,
-        .right-content {
-            padding: 10px;
-        }
+    &__collapse .ant-collapse-header {
+        background-color: transparent !important;
+        font-weight: bold; /* Bold title */
+        padding-left: 0 !important; /* Remove left padding */
+    }
+
+    &__collapse .ant-collapse-content {
+        background-color: transparent !important;
+        border-top: none !important;
+    }
+
+    &__collapse .ant-collapse-content > .ant-collapse-content-box {
+        padding-left: 0 !important; /* Remove left padding */
+    }
+
+    &__panel .ant-collapse-header-text {
+        flex: 1;
     }
 }

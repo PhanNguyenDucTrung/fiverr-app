@@ -1,5 +1,5 @@
 // src/components/Header.tsx
-import React, { FormEvent, useEffect } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Avatar, Dropdown, Space } from 'antd';
 import { UserOutlined, LogoutOutlined, BellOutlined, ProfileOutlined } from '@ant-design/icons';
@@ -9,6 +9,8 @@ import { useSearchHandler } from '../../utils/seachHandler';
 import { setSearchTerm } from '../../redux/reducers/searchSlice';
 import hamburger from '../../assets/hamburger.svg';
 import Logo from './Logo';
+import Sidebar from '../Sidebar';
+import { Category } from '../../models/Category';
 
 interface HeaderProps {
     isHomePage: boolean;
@@ -16,9 +18,10 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ isHomePage, scrollY }) => {
+    const [isSidebarVisible, setSidebarVisible] = useState(false);
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const searchTerm = useAppSelector(state => state.searchReducer.searchTerm); // Get the search term from Redux state
+    const searchTerm = useAppSelector(state => state.searchReducer.searchTerm);
     const { token, profile } = useAppSelector(state => state.authReducer);
     const profilePicture = profile?.profilePicture;
     const handleSearch = useSearchHandler();
@@ -59,14 +62,27 @@ const Header: React.FC<HeaderProps> = ({ isHomePage, scrollY }) => {
         },
     ];
 
+    const toggleSidebar = () => {
+        setSidebarVisible(!isSidebarVisible);
+    };
+
+    const closeSidebar = () => {
+        setSidebarVisible(false);
+    };
+
+    // Dummy categories for example purposes
+    const categories = useAppSelector(state => state.congViecReducer?.categoriesMenu) as Category[];
+
     return (
         <div className={`header-wrapper ${isHomePage ? (scrollY > 200 ? 'scrolled' : 'home') : 'default'}`}>
             <div className='header-row-wrapper'>
                 <div className='max-width-container header-row'>
+                    {/* Hamburger button */}
                     <button
                         type='button'
                         style={{ backgroundColor: 'transparent', border: 'none' }}
-                        className='btn-navicon'>
+                        className='btn-navicon'
+                        onClick={toggleSidebar}>
                         <img src={hamburger} alt='menu' />
                     </button>
                     <NavLink to='/' className='site-logo'>
@@ -78,7 +94,7 @@ const Header: React.FC<HeaderProps> = ({ isHomePage, scrollY }) => {
                                 type='text'
                                 placeholder='Search for any service...'
                                 value={searchTerm}
-                                onChange={e => dispatch(setSearchTerm(e.target.value))} // Update search term in Redux state
+                                onChange={e => dispatch(setSearchTerm(e.target.value))}
                                 aria-label='Search services'
                             />
                             <button type='submit'>
@@ -132,6 +148,8 @@ const Header: React.FC<HeaderProps> = ({ isHomePage, scrollY }) => {
                     </nav>
                 </div>
             </div>
+            {/* Sidebar component */}
+            <Sidebar categories={categories} isVisible={isSidebarVisible} onClose={closeSidebar} />
         </div>
     );
 };

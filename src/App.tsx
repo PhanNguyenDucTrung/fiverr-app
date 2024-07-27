@@ -18,8 +18,11 @@ import Users from './pages/Users';
 import Services from './pages/Services';
 import Orders from './pages/Orders';
 import Categories from './pages/Categories';
+import SubcategoryDetails from './pages/SubcategoryDetails';
+import ChildCategoryDetails from './pages/ChildCategoryDetails';
 import LoginForm from './pages/LoginForm';
 import SignUpForm from './pages/SignUpForm';
+import ChatTemplate from './templates/ChatTemplate';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -44,18 +47,19 @@ function App() {
 
         return () => clearInterval(intervalId);
     }, [dispatch, expiresAt]);
+    const handleLoginSuccess = () => {
+        // Handle login success, e.g., redirect to home page
+        console.log('Login successful!');
+    };
     return (
         <Routes>
             <Route path='*' element={<Navigate to='/' />} />
-
-            <Route path='/login' element={<LoginForm />} />
-
+            <Route path='/login' element={<LoginForm onLoginSuccess={handleLoginSuccess} />} />
             <Route path='/' element={<MainTemplate />}>
                 <Route index element={<Home />} />
                 <Route path='/home' element={<Home />} />
 
                 <Route path='/profile' element={<Profile />} />
-                <Route path='/job-category' element={<JobCategory />} />
                 <Route path='/search/services' element={<JobList />} />
                 <Route path='/services/:serviceId' element={<JobDetail />} />
                 <Route path='/job-detail' element={<JobDetail />} />
@@ -64,20 +68,20 @@ function App() {
                 <Route path='/verify-email/:token' element={<EmailVerification />} />
                 <Route path='/reset-password/:token' element={<PasswordReset />} />
             </Route>
-
             <Route path='/admin' element={<AdminTemplate />}>
                 <Route path='users' element={<Users />} />
                 <Route path='jobs' element={<Services />} />
                 <Route path='orders' element={<Orders />} />
                 <Route path='categories' element={<Categories />} />
+                <Route path='/admin/categories/:id/edit' element={<SubcategoryDetails />} />
+                <Route path='/admin/subcategories/:id/child-categories' element={<ChildCategoryDetails />} />
             </Route>
-
-            <Route path='/login' element={<LoginForm />} />
+            <Route path='/login' element={<LoginForm onLoginSuccess={handleLoginSuccess} />} />
             <Route path='/signup' element={<SignUpForm />} />
             <Route path='/register' element={<SignUpForm />} />
-
             <Route path='/services/new' element={<ServiceUpload />} />
             <Route path='/services/edit/:serviceId' element={<ServiceUpload />} />
+            <Route path='/chat' element={<ChatTemplate />} />{' '}
         </Routes>
     );
 }

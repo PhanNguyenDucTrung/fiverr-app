@@ -1,7 +1,8 @@
+import { useEffect, useState } from 'react';
 import { Layout, Menu, message } from 'antd';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../redux/hooks';
-
+import Logo from '../components/Header/Logo';
 import {
     MenuUnfoldOutlined,
     MenuFoldOutlined,
@@ -9,8 +10,8 @@ import {
     VideoCameraOutlined,
     AppstoreOutlined,
     FileDoneOutlined,
+    HomeOutlined,
 } from '@ant-design/icons';
-import { useEffect, useState } from 'react';
 
 const { Header, Sider, Content } = Layout;
 
@@ -18,6 +19,7 @@ const AdminTemplate: React.FC = () => {
     const role = useAppSelector(state => state.authReducer.role);
     const [collapsed, setCollapsed] = useState(false);
     const navigate = useNavigate();
+
     const toggle = () => {
         setCollapsed(!collapsed);
     };
@@ -27,7 +29,30 @@ const AdminTemplate: React.FC = () => {
             message.error('You are not authorized to access this page');
             navigate('/');
         }
-    }, [role]);
+    }, [role, navigate]);
+
+    const menuItems = [
+        {
+            key: '1',
+            icon: <UserOutlined />,
+            label: <NavLink to='/admin/users'>User Management</NavLink>,
+        },
+        {
+            key: '2',
+            icon: <VideoCameraOutlined />,
+            label: <NavLink to='/admin/jobs'>Job List Management</NavLink>,
+        },
+        {
+            key: '3',
+            icon: <FileDoneOutlined />,
+            label: <NavLink to='/admin/orders'>Order Management</NavLink>,
+        },
+        {
+            key: '4',
+            icon: <AppstoreOutlined />,
+            label: <NavLink to='/admin/categories'>Category Management</NavLink>,
+        },
+    ];
 
     return (
         <Layout style={{ minHeight: '100vh' }}>
@@ -37,31 +62,23 @@ const AdminTemplate: React.FC = () => {
                         className='logo'
                         style={{
                             height: '32px',
-                            background: 'rgba(255, 255, 255, 0.2)',
+                            background: 'transparent',
                             margin: '16px',
-                            color: 'white',
                             fontSize: '20px',
                             padding: '0 14px',
                             lineHeight: '32px',
                             textAlign: 'center',
                         }}>
-                        <span style={{ color: 'white' }}>Home</span>
+                        {collapsed ? (
+                            <HomeOutlined style={{ color: 'white', fontSize: '24px' }} />
+                        ) : (
+                            <span style={{ color: 'white' }}>
+                                <Logo isHomePage={true} scrollY={0} />
+                            </span>
+                        )}
                     </div>
                 </NavLink>
-                <Menu theme='dark' mode='inline' defaultSelectedKeys={['1']}>
-                    <Menu.Item key='1' icon={<UserOutlined />}>
-                        <NavLink to='/admin/users'>Quản lý người dùng</NavLink>
-                    </Menu.Item>
-                    <Menu.Item key='2' icon={<VideoCameraOutlined />}>
-                        <NavLink to='/admin/jobs'>Quản lý danh sách công việc</NavLink>
-                    </Menu.Item>
-                    <Menu.Item key='3' icon={<FileDoneOutlined />}>
-                        <NavLink to='/admin/orders'>Quản lý công việc đặt hàng</NavLink>
-                    </Menu.Item>
-                    <Menu.Item key='4' icon={<AppstoreOutlined />}>
-                        <NavLink to='/admin/categories'>Quản lý danh mục</NavLink>
-                    </Menu.Item>
-                </Menu>
+                <Menu theme='dark' mode='inline' defaultSelectedKeys={['1']} items={menuItems} />
             </Sider>
             <Layout className='site-layout'>
                 <Header className='site-layout-background' style={{ padding: 0 }}>
