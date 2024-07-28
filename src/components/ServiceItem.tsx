@@ -35,7 +35,11 @@ const ServiceItem: React.FC<ServiceItemProps> = ({ service, isLiked, handleLike,
                 {imageLoading && <Skeleton.Image active />}
                 <LazyLoad height={150} once>
                     <img
-                        src={`https://via.placeholder.com/150?text=${service.title}`}
+                        src={
+                            service.gallery && service.gallery.length > 0
+                                ? service.gallery[0]
+                                : `https://via.placeholder.com/150?text=${service.title}`
+                        }
                         alt={service.title}
                         onLoad={() => setImageLoading(false)}
                         style={{ display: imageLoading ? 'none' : 'block' }}

@@ -11,9 +11,10 @@ const socket = io(`${import.meta.env.VITE_SOCKET_URL}`);
 
 interface ChatProps {
     user: User;
+    onNewMessage: () => void; // New prop to notify parent component of new messages
 }
 
-const Chat: React.FC<ChatProps> = ({ user }) => {
+const Chat: React.FC<ChatProps> = ({ user, onNewMessage }) => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [message, setMessage] = useState<string>('');
     const [profile, setProfile] = useState<User | null>(null);
@@ -55,6 +56,8 @@ const Chat: React.FC<ChatProps> = ({ user }) => {
             });
             setMessages(prevMessages => [...prevMessages, response.data]);
             setMessage('');
+            socket.emit('newMessage', response.data); // Emit new message event
+            onNewMessage(); // Notify parent component of new message
         } catch (error) {
             console.error('Error sending message:', error);
         }

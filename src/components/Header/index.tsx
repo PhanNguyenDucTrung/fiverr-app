@@ -2,7 +2,7 @@
 import React, { FormEvent, useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Avatar, Dropdown, Space } from 'antd';
-import { UserOutlined, LogoutOutlined, BellOutlined, ProfileOutlined } from '@ant-design/icons';
+import { UserOutlined, LogoutOutlined, BellOutlined, ProfileOutlined, MessageOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { fetchUserProfile, clearToken } from '../../redux/reducers/authSlice';
 import { useSearchHandler } from '../../utils/seachHandler';
@@ -119,6 +119,18 @@ const Header: React.FC<HeaderProps> = ({ isHomePage, scrollY }) => {
                             </li>
                             {token ? (
                                 <li>
+                                    <BellOutlined
+                                        style={{
+                                            fontSize: '20px',
+                                            cursor: 'pointer',
+                                            marginRight: '15px',
+                                        }}
+                                    />
+
+                                    <MessageOutlined
+                                        style={{ fontSize: '20px', cursor: 'pointer', marginRight: '15px' }}
+                                        onClick={() => navigate('/chat')}
+                                    />
                                     <Dropdown menu={{ items: menuItems }} trigger={['click']} placement='bottom'>
                                         <Space>
                                             <Avatar

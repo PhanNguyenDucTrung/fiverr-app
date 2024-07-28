@@ -1,6 +1,7 @@
 // src/pages/Home.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import LazyLoad from 'react-lazyload';
 import { PlayCircleOutlined } from '@ant-design/icons';
 import VideoModal from '../../components/VideoModal';
 import CheckIcon from './CheckIcon';
@@ -90,10 +91,12 @@ const Home = () => {
                                     media='(min-width: 900px)'
                                     srcSet='https://fiverr-res.cloudinary.com/npm-assets/@fiverr/logged_out_homepage_perseus/meta.12b5e5c.png 1x, https://fiverr-res.cloudinary.com/npm-assets/@fiverr/logged_out_homepage_perseus/meta2x.b364aec.png 2x'
                                 />
-                                <img
-                                    src='https://fiverr-res.cloudinary.com/npm-assets/@fiverr/logged_out_homepage_perseus/meta.12b5e5c.png'
-                                    alt='Meta'
-                                />
+                                <LazyLoad>
+                                    <img
+                                        src='https://fiverr-res.cloudinary.com/npm-assets/@fiverr/logged_out_homepage_perseus/meta.12b5e5c.png'
+                                        alt='Meta'
+                                    />
+                                </LazyLoad>
                             </picture>
                         </li>
                         <li>
@@ -106,10 +109,12 @@ const Home = () => {
                                     media='(min-width: 900px)'
                                     srcSet='https://fiverr-res.cloudinary.com/npm-assets/@fiverr/logged_out_homepage_perseus/google.61e78c8.png 1x, https://fiverr-res.cloudinary.com/npm-assets/@fiverr/logged_out_homepage_perseus/google2x.4fa6c20.png 2x'
                                 />
-                                <img
-                                    src='https://fiverr-res.cloudinary.com/npm-assets/@fiverr/logged_out_homepage_perseus/google.61e78c8.png'
-                                    alt='Google'
-                                />
+                                <LazyLoad>
+                                    <img
+                                        src='https://fiverr-res.cloudinary.com/npm-assets/@fiverr/logged_out_homepage_perseus/google.61e78c8.png'
+                                        alt='Google'
+                                    />
+                                </LazyLoad>
                             </picture>
                         </li>
                         <li>
@@ -122,10 +127,13 @@ const Home = () => {
                                     media='(min-width: 900px)'
                                     srcSet='https://fiverr-res.cloudinary.com/npm-assets/@fiverr/logged_out_homepage_perseus/netflix.96c5e3f.png 1x, https://fiverr-res.cloudinary.com/npm-assets/@fiverr/logged_out_homepage_perseus/netflix2x.6b36ad6.png 2x'
                                 />
-                                <img
-                                    src='https://fiverr-res.cloudinary.com/npm-assets/@fiverr/logged_out_homepage_perseus/netflix.96c5e3f.png'
-                                    alt='Netflix'
-                                />
+
+                                <LazyLoad>
+                                    <img
+                                        src='https://fiverr-res.cloudinary.com/npm-assets/@fiverr/logged_out_homepage_perseus/netflix.96c5e3f.png'
+                                        alt='Netflix'
+                                    />
+                                </LazyLoad>
                             </picture>
                         </li>
                         <li>
@@ -138,10 +146,12 @@ const Home = () => {
                                     media='(min-width: 900px)'
                                     srcSet='https://fiverr-res.cloudinary.com/npm-assets/@fiverr/logged_out_homepage_perseus/pandg.0f4cfc2.png 1x, https://fiverr-res.cloudinary.com/npm-assets/@fiverr/logged_out_homepage_perseus/pandg2x.0d06f7b.png 2x'
                                 />
-                                <img
-                                    src='https://fiverr-res.cloudinary.com/npm-assets/@fiverr/logged_out_homepage_perseus/pandg.0f4cfc2.png'
-                                    alt='P&G'
-                                />
+                                <LazyLoad>
+                                    <img
+                                        src='https://fiverr-res.cloudinary.com/npm-assets/@fiverr/logged_out_homepage_perseus/pandg.0f4cfc2.png'
+                                        alt='P&G'
+                                    />
+                                </LazyLoad>
                             </picture>
                         </li>
                         <li className='display-from-sm'>
@@ -154,10 +164,12 @@ const Home = () => {
                                     media='(min-width: 900px)'
                                     srcSet='https://fiverr-res.cloudinary.com/npm-assets/@fiverr/logged_out_homepage_perseus/paypal.305e264.png 1x, https://fiverr-res.cloudinary.com/npm-assets/@fiverr/logged_out_homepage_perseus/paypal2x.d2fa54d.png 2x'
                                 />
-                                <img
-                                    src='https://fiverr-res.cloudinary.com/npm-assets/@fiverr/logged_out_homepage_perseus/paypal.305e264.png'
-                                    alt='PayPal'
-                                />
+                                <LazyLoad>
+                                    <img
+                                        src='https://fiverr-res.cloudinary.com/npm-assets/@fiverr/logged_out_homepage_perseus/paypal.305e264.png'
+                                        alt='PayPal'
+                                    />
+                                </LazyLoad>
                             </picture>
                         </li>
                     </ul>
@@ -195,16 +207,19 @@ const Home = () => {
                                 alignItems: 'center',
                                 justifyContent: 'center',
                             }}>
-                            <img
-                                style={{ display: 'block', width: '100%', cursor: 'pointer' }}
-                                src='https://fiverr-res.cloudinary.com/q_auto,f_auto,w_700,dpr_2.0/v1/attachments/generic_asset/asset/089e3bb9352f90802ad07ad9f6a4a450-1599517407052/selling-proposition-still-1400-x1.png'
-                                alt=''
-                                onClick={() =>
-                                    openModal(
-                                        'https://fiverr-res.cloudinary.com/video/upload/t_fiverr_hd/vmvv3czyk2ifedefkau7'
-                                    )
-                                }
-                            />
+                            {' '}
+                            <LazyLoad height={200} offset={100}>
+                                <img
+                                    style={{ display: 'block', width: '100%', cursor: 'pointer' }}
+                                    src='https://fiverr-res.cloudinary.com/q_auto,f_auto,w_700,dpr_2.0/v1/attachments/generic_asset/asset/089e3bb9352f90802ad07ad9f6a4a450-1599517407052/selling-proposition-still-1400-x1.png'
+                                    alt=''
+                                    onClick={() =>
+                                        openModal(
+                                            'https://fiverr-res.cloudinary.com/video/upload/t_fiverr_hd/vmvv3czyk2ifedefkau7'
+                                        )
+                                    }
+                                />
+                            </LazyLoad>
                             <button className='play-button' onClick={() => setModalIsOpen(true)}>
                                 <PlayCircleOutlined style={{ color: 'white', fontSize: 50 }} />
                             </button>
