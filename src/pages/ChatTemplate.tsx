@@ -1,12 +1,16 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Layout } from 'antd';
 import ChatList from './ChatList';
 import Chat from './Chat';
 import { User } from '../models/Message';
+import useAuth from '../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 const { Sider, Content } = Layout;
 
 const ChatTemplate: React.FC = () => {
+    const { isAuthenticated } = useAuth();
+    const navigate = useNavigate();
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const chatListRef = useRef<{ fetchChats: () => void } | null>(null);
 
@@ -19,6 +23,12 @@ const ChatTemplate: React.FC = () => {
             chatListRef.current.fetchChats();
         }
     };
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            navigate('/login');
+        }
+    }, [isAuthenticated]);
 
     return (
         <Layout style={{ height: '100vh' }}>

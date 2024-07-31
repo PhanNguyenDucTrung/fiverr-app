@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { auth, googleProvider } from '../config/firebase';
+import { auth, googleProvider } from '../utils/firebase';
 import { signInWithPopup } from 'firebase/auth';
 
 import { Link, useNavigate } from 'react-router-dom';

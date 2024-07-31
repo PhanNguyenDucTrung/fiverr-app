@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Row, Col, Pagination, Empty, Button, Divider, App as AntdApp } from 'antd';
+import { Card, Row, Col, Pagination, Empty, Button, Divider } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import axiosInstance from '../../utils/api';
@@ -8,30 +8,36 @@ import ServiceItem from '../../components/ServiceItem';
 import { Service } from '../../models/Service';
 import { useNavigate } from 'react-router-dom';
 import ProfileDetails from './ProfileDetails';
+import useAuth from '../../hooks/useAuth';
+import { useServiceLike } from '../../hooks/useServiceLike';
 
 const Profile: React.FC = () => {
+    const { isAuthenticated } = useAuth();
+    const { handleLike, handleUnlike, isLiked } = useServiceLike();
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
-    const { notification } = AntdApp.useApp();
+
     const [profileData, setProfileData] = useState<any>(null);
     const { profile } = useAppSelector(state => state.authReducer);
-    const [likedServices, setLikedServices] = useState<Service[]>([]);
+    console.log(profile);
     const [associatedServices, setAssociatedServices] = useState<Service[]>([]);
     const [likedCurrentPage, setLikedCurrentPage] = useState(1);
     const [associatedCurrentPage, setAssociatedCurrentPage] = useState(1);
     const [pageSize] = useState(4);
 
     useEffect(() => {
+        if (!isAuthenticated) {
+            navigate('/login');
+        }
         if (!profile) {
             dispatch(fetchUserProfile());
         } else {
             setProfileData(profile);
             setLoading(false);
-            setLikedServices(profile.likedServices || []);
             fetchAssociatedServices(profile.id);
         }
-    }, [profile, dispatch]);
+    }, [profile, isAuthenticated, dispatch]);
 
     const fetchAssociatedServices = async (userId: string) => {
         try {
@@ -40,42 +46,6 @@ const Profile: React.FC = () => {
         } catch (error) {
             console.error('Error fetching associated services:', error);
         }
-    };
-
-    const refetchProfile = async () => {
-        try {
-            await dispatch(fetchUserProfile());
-        } catch (error) {
-            console.error('Error refetching profile:', error);
-        }
-    };
-
-    const handleLike = async (serviceId: string) => {
-        try {
-            const response = await axiosInstance.post(`/services/${serviceId}/like`);
-            if (response.status === 200) {
-                notification.success({ message: 'Service liked successfully' });
-                await refetchProfile();
-            }
-        } catch (error) {
-            console.error('Error liking service:', error);
-        }
-    };
-
-    const handleUnlike = async (serviceId: string) => {
-        try {
-            const response = await axiosInstance.post(`/services/${serviceId}/unlike`);
-            if (response.status === 200) {
-                notification.success({ message: 'Service unliked successfully' });
-                await refetchProfile();
-            }
-        } catch (error) {
-            console.error('Error unliking service:', error);
-        }
-    };
-
-    const isLiked = (serviceId: string) => {
-        return likedServices.some(service => service.id === serviceId);
     };
 
     const handleLikedPageChange = (page: number) => {
@@ -88,7 +58,7 @@ const Profile: React.FC = () => {
 
     const likedStartIndex = (likedCurrentPage - 1) * pageSize;
     const likedEndIndex = likedStartIndex + pageSize;
-    const currentLikedServices = likedServices.slice(likedStartIndex, likedEndIndex);
+    const currentLikedServices = profile?.likedServices?.slice(likedStartIndex, likedEndIndex) || [];
 
     const associatedStartIndex = (associatedCurrentPage - 1) * pageSize;
     const associatedEndIndex = associatedStartIndex + pageSize;
@@ -131,7 +101,7 @@ const Profile: React.FC = () => {
                                 <Pagination
                                     current={likedCurrentPage}
                                     pageSize={pageSize}
-                                    total={likedServices.length}
+                                    total={profile?.likedServices?.length || 0}
                                     onChange={handleLikedPageChange}
                                     style={{ marginTop: '20px', textAlign: 'center' }}
                                 />

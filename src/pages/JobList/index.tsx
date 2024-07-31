@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
-import { Modal, App as AntdApp } from 'antd';
+import { Modal } from 'antd';
 
 import axiosInstance from '../../utils/api';
-import { useAppSelector, useAppDispatch } from '../../redux/hooks';
-import { fetchUserProfile } from '../../redux/reducers/authSlice';
+import { useServiceLike } from '../../hooks/useServiceLike';
 
 import Filter from '../../components/Filter';
 import ServiceItem from '../../components/ServiceItem';
@@ -15,17 +14,12 @@ import { Service } from '../../models/Service';
 
 const JobList: React.FC = () => {
     const location = useLocation();
-    const dispatch = useAppDispatch();
-    const [likedServices, setLikedServices] = useState<Service[]>([]);
+    const { handleLike, handleUnlike, isLiked, isLoginModalVisible, setIsLoginModalVisible } = useServiceLike();
     const queryParams = new URLSearchParams(location.search);
     const searchTerm = queryParams.get('query');
     const [services, setServices] = useState<Service[]>([]);
     const [loading, setLoading] = useState(true);
     const { tenChiTiet } = useParams<{ tenChiTiet: string }>();
-    const [isLoginModalVisible, setIsLoginModalVisible] = useState(false);
-    const token = useAppSelector(state => state.authReducer.token);
-    const profile = useAppSelector(state => state.authReducer.profile);
-    const { message } = AntdApp.useApp();
 
     const fetchServicesBySearch = useCallback(async (searchTerm: string) => {
         setLoading(true);
@@ -54,18 +48,6 @@ const JobList: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        if (token && !profile) {
-            dispatch(fetchUserProfile());
-        }
-    }, [dispatch, profile, token]);
-
-    useEffect(() => {
-        if (profile) {
-            setLikedServices(profile.likedServices || []);
-        }
-    }, [profile]);
-
-    useEffect(() => {
         const pathSegments = location.pathname.split('/');
         const childCategoryId = pathSegments[pathSegments.length - 1];
 
@@ -75,49 +57,6 @@ const JobList: React.FC = () => {
             fetchServicesByCategory(childCategoryId);
         }
     }, [location.pathname, location.search, fetchServicesBySearch, fetchServicesByCategory, searchTerm]);
-
-    const handleLike = async (serviceId: string) => {
-        if (!token) {
-            setIsLoginModalVisible(true);
-            return;
-        }
-        try {
-            const response = await axiosInstance.post(`/services/${serviceId}/like`);
-            if (response.status === 200) message.success('Service liked successfully');
-            const likedService = services.find(service => service.id === serviceId);
-            if (likedService) {
-                setLikedServices(prevLikedServices => [...prevLikedServices, likedService]);
-                setServices(prevServices =>
-                    prevServices.map(service =>
-                        service.id === serviceId ? { ...service, likes: service.likes + 1 } : service
-                    )
-                );
-            }
-        } catch (error) {
-            console.error('Error liking service:', error);
-        }
-    };
-
-    const handleUnlike = async (serviceId: string) => {
-        if (!token) {
-            setIsLoginModalVisible(true);
-            return;
-        }
-        try {
-            const response = await axiosInstance.post(`/services/${serviceId}/unlike`);
-            if (response.status === 200) message.success('Service unliked successfully');
-            setLikedServices(prevLikedServices => prevLikedServices.filter(service => service.id !== serviceId));
-            setServices(prevServices =>
-                prevServices.map(service =>
-                    service.id === serviceId ? { ...service, likes: service.likes - 1 } : service
-                )
-            );
-        } catch (error) {
-            console.error('Error unliking service:', error);
-        }
-    };
-
-    const isLiked = (serviceId: string) => likedServices.some(service => service.id === serviceId);
 
     return (
         <div>

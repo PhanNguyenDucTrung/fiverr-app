@@ -1,11 +1,12 @@
-import { useEffect, lazy, Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from './redux/hooks';
-import { clearToken } from './redux/reducers/authSlice';
+import useTokenExpirationChecker from './hooks/useTokenExpirationChecker';
 
 import MainTemplate from './templates/MainTemplate';
 import AdminTemplate from './templates/AdminTemplate';
 import ChatTemplate from './pages/ChatTemplate';
+
+import FullPageSpin from './components/FullPageSpin';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -29,22 +30,7 @@ const SignUpForm = lazy(() => import('./pages/SignUpForm'));
 const ServiceUpload = lazy(() => import('./pages/ServiceUpload'));
 
 function App() {
-    const dispatch = useAppDispatch();
-    const expiresAt = useAppSelector(state => state.authReducer.expiresAt);
-
-    useEffect(() => {
-        const checkTokenExpiration = () => {
-            if (expiresAt && Date.now() >= expiresAt) {
-                dispatch(clearToken());
-            }
-        };
-
-        checkTokenExpiration();
-
-        const intervalId = setInterval(checkTokenExpiration, 1000 * 60);
-
-        return () => clearInterval(intervalId);
-    }, [dispatch, expiresAt]);
+    useTokenExpirationChecker();
 
     const handleLoginSuccess = () => {
         console.log('Login successful!');
@@ -56,7 +42,7 @@ function App() {
             <Route
                 path='/login'
                 element={
-                    <Suspense fallback={<div>Loading...</div>}>
+                    <Suspense fallback={<FullPageSpin />}>
                         <LoginForm onLoginSuccess={handleLoginSuccess} />
                     </Suspense>
                 }
@@ -65,7 +51,7 @@ function App() {
                 <Route
                     index
                     element={
-                        <Suspense fallback={<div>Loading...</div>}>
+                        <Suspense fallback={<FullPageSpin />}>
                             <Home />
                         </Suspense>
                     }
@@ -73,7 +59,7 @@ function App() {
                 <Route
                     path='/home'
                     element={
-                        <Suspense fallback={<div>Loading...</div>}>
+                        <Suspense fallback={<FullPageSpin />}>
                             <Home />
                         </Suspense>
                     }
@@ -81,7 +67,7 @@ function App() {
                 <Route
                     path='/profile'
                     element={
-                        <Suspense fallback={<div>Loading...</div>}>
+                        <Suspense fallback={<FullPageSpin />}>
                             <Profile />
                         </Suspense>
                     }
@@ -89,7 +75,7 @@ function App() {
                 <Route
                     path='/search/services'
                     element={
-                        <Suspense fallback={<div>Loading...</div>}>
+                        <Suspense fallback={<FullPageSpin />}>
                             <JobList />
                         </Suspense>
                     }
@@ -97,7 +83,7 @@ function App() {
                 <Route
                     path='/services/:serviceId'
                     element={
-                        <Suspense fallback={<div>Loading...</div>}>
+                        <Suspense fallback={<FullPageSpin />}>
                             <JobDetail />
                         </Suspense>
                     }
@@ -105,7 +91,7 @@ function App() {
                 <Route
                     path='/job-detail'
                     element={
-                        <Suspense fallback={<div>Loading...</div>}>
+                        <Suspense fallback={<FullPageSpin />}>
                             <JobDetail />
                         </Suspense>
                     }
@@ -113,7 +99,7 @@ function App() {
                 <Route
                     path='/categories/:categoryName'
                     element={
-                        <Suspense fallback={<div>Loading...</div>}>
+                        <Suspense fallback={<FullPageSpin />}>
                             <JobCategory />
                         </Suspense>
                     }
@@ -121,7 +107,7 @@ function App() {
                 <Route
                     path='/categories/:tenLoaiCongViec/:tenNhom/:tenChiTiet/:id'
                     element={
-                        <Suspense fallback={<div>Loading...</div>}>
+                        <Suspense fallback={<FullPageSpin />}>
                             <JobList />
                         </Suspense>
                     }
@@ -129,7 +115,7 @@ function App() {
                 <Route
                     path='/verify-email/:token'
                     element={
-                        <Suspense fallback={<div>Loading...</div>}>
+                        <Suspense fallback={<FullPageSpin />}>
                             <EmailVerification />
                         </Suspense>
                     }
@@ -137,7 +123,7 @@ function App() {
                 <Route
                     path='/reset-password/:token'
                     element={
-                        <Suspense fallback={<div>Loading...</div>}>
+                        <Suspense fallback={<FullPageSpin />}>
                             <PasswordReset />
                         </Suspense>
                     }
@@ -147,7 +133,7 @@ function App() {
                 <Route
                     path='users'
                     element={
-                        <Suspense fallback={<div>Loading...</div>}>
+                        <Suspense fallback={<FullPageSpin />}>
                             <Users />
                         </Suspense>
                     }
@@ -155,7 +141,7 @@ function App() {
                 <Route
                     path='jobs'
                     element={
-                        <Suspense fallback={<div>Loading...</div>}>
+                        <Suspense fallback={<FullPageSpin />}>
                             <Services />
                         </Suspense>
                     }
@@ -163,7 +149,7 @@ function App() {
                 <Route
                     path='orders'
                     element={
-                        <Suspense fallback={<div>Loading...</div>}>
+                        <Suspense fallback={<FullPageSpin />}>
                             <Orders />
                         </Suspense>
                     }
@@ -171,7 +157,7 @@ function App() {
                 <Route
                     path='categories'
                     element={
-                        <Suspense fallback={<div>Loading...</div>}>
+                        <Suspense fallback={<FullPageSpin />}>
                             <Categories />
                         </Suspense>
                     }
@@ -179,7 +165,7 @@ function App() {
                 <Route
                     path='/admin/categories/:id/edit'
                     element={
-                        <Suspense fallback={<div>Loading...</div>}>
+                        <Suspense fallback={<FullPageSpin />}>
                             <SubcategoryDetails />
                         </Suspense>
                     }
@@ -187,7 +173,7 @@ function App() {
                 <Route
                     path='/admin/subcategories/:id/child-categories'
                     element={
-                        <Suspense fallback={<div>Loading...</div>}>
+                        <Suspense fallback={<FullPageSpin />}>
                             <ChildCategoryDetails />
                         </Suspense>
                     }
@@ -196,7 +182,7 @@ function App() {
             <Route
                 path='/signup'
                 element={
-                    <Suspense fallback={<div>Loading...</div>}>
+                    <Suspense fallback={<FullPageSpin />}>
                         <SignUpForm />
                     </Suspense>
                 }
@@ -204,7 +190,7 @@ function App() {
             <Route
                 path='/register'
                 element={
-                    <Suspense fallback={<div>Loading...</div>}>
+                    <Suspense fallback={<FullPageSpin />}>
                         <SignUpForm />
                     </Suspense>
                 }
@@ -212,7 +198,7 @@ function App() {
             <Route
                 path='/services/new'
                 element={
-                    <Suspense fallback={<div>Loading...</div>}>
+                    <Suspense fallback={<FullPageSpin />}>
                         <ServiceUpload />
                     </Suspense>
                 }
@@ -220,7 +206,7 @@ function App() {
             <Route
                 path='/services/edit/:serviceId'
                 element={
-                    <Suspense fallback={<div>Loading...</div>}>
+                    <Suspense fallback={<FullPageSpin />}>
                         <ServiceUpload />
                     </Suspense>
                 }
@@ -228,7 +214,7 @@ function App() {
             <Route
                 path='/chat'
                 element={
-                    <Suspense fallback={<div>Loading...</div>}>
+                    <Suspense fallback={<FullPageSpin />}>
                         <ChatTemplate />
                     </Suspense>
                 }

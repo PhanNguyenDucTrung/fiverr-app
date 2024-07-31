@@ -13,7 +13,7 @@ interface AuthState {
 const initialState: AuthState = {
     token: localStorage.getItem('token'),
     role: null,
-    expiresAt: null,
+    expiresAt: null as number | null,
     profile: localStorage.getItem('profile') ? JSON.parse(localStorage.getItem('profile')!) : null,
 };
 
@@ -69,9 +69,15 @@ export const tokenExpirationMiddleware: Middleware = storeAPI => next => action 
     const result = next(action);
 
     const state: AuthState = storeAPI.getState().auth;
-    if (state?.expiresAt && Date.now() >= state.expiresAt) {
-        storeAPI.dispatch(authSlice.actions.clearToken());
-    }
+    const checkTokenExpiration = () => {
+        if (state?.expiresAt && Date.now() >= state?.expiresAt) {
+            storeAPI.dispatch(authSlice.actions.clearToken());
+        } else {
+            setTimeout(checkTokenExpiration, 5 * 60 * 1000);
+        }
+    };
+
+    checkTokenExpiration();
 
     return result;
 };

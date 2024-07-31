@@ -14,7 +14,6 @@ import { Service } from '../../models/Service';
 import LoginModal from '../../components/LoginModal';
 
 const { Title, Text } = Typography;
-const { Panel } = Collapse;
 
 const renderListItems = (items: string[]) => {
     return items.map((item, index) => {
@@ -55,20 +54,22 @@ const renderReviews = (reviews: Service['reviews']) => {
 };
 
 const renderFaq = (faq: Service['faq']) => {
+    const faqItems = faq.map((item, index) => ({
+        key: index.toString(),
+        label: item.question,
+        children: <Text>{item.answer}</Text>,
+    }));
+
     return (
         <Collapse
             ghost
             accordion
             bordered={false}
-            expandIconPosition='right'
+            expandIconPosition='start'
             expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
-            className='job-detail__collapse'>
-            {faq.map((item, index) => (
-                <Panel header={item.question} key={index} className='job-detail__panel'>
-                    <Text>{item.answer}</Text>
-                </Panel>
-            ))}
-        </Collapse>
+            className='job-detail__collapse'
+            items={faqItems}
+        />
     );
 };
 
