@@ -3,7 +3,7 @@ import { auth, googleProvider } from '../utils/firebase';
 import { signInWithPopup } from 'firebase/auth';
 
 import { Link, useNavigate } from 'react-router-dom';
-import { Form, Input, Checkbox, message } from 'antd';
+import { Form, Input, Checkbox, App as AntdApp } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { setToken } from '../redux/reducers/authSlice';
@@ -13,6 +13,7 @@ interface LoginFormProps {
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
+    const { message } = AntdApp.useApp();
     const handleGoogleLogin = async () => {
         try {
             const result = await signInWithPopup(auth, googleProvider);

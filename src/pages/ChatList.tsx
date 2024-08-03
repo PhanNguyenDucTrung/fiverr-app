@@ -68,7 +68,12 @@ const ChatList = forwardRef(({ onUserSelect }: ChatListProps, ref) => {
     };
 
     return (
-        <div style={{ padding: '20px', maxWidth: '400px' }}>
+        <div
+            style={{
+                maxWidth: '400px',
+                maxHeight: '100vh',
+                overflowY: 'scroll',
+            }}>
             <Title level={4}>Contacts</Title>
             <AutoComplete
                 options={searchResults.map(user => ({ value: user.username, label: user.username }))}

@@ -27,7 +27,7 @@ const EditSubcategoryModal: React.FC<EditSubcategoryModalProps> = ({ categoryId,
         setLoading(true);
         try {
             await dispatch(updateSubcategory({ categoryId, subcategory: { ...subcategory, name: values.name } }));
-            onClose(); // Close the modal on successful submission
+            onClose();
         } catch (error) {
             console.error('Failed to update subcategory:', error);
         } finally {

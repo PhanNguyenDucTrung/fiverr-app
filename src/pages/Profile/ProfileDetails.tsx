@@ -5,11 +5,8 @@ import axiosInstance from '../../utils/api';
 
 const { Title, Text } = Typography;
 
-const ProfileDetails: React.FC<{ profileData: any; setProfileData: (data: any) => void; loading: boolean }> = ({
-    profileData,
-    setProfileData,
-    loading,
-}) => {
+// Xóa setProfileData nếu không sử dụng
+const ProfileDetails: React.FC<{ profileData: any; loading: boolean }> = ({ profileData, loading }) => {
     const { notification } = AntdApp.useApp();
     const [form] = Form.useForm();
     const [isEditing, setIsEditing] = useState(false);
@@ -41,7 +38,7 @@ const ProfileDetails: React.FC<{ profileData: any; setProfileData: (data: any) =
     const handleSaveProfile = () => {
         form.validateFields()
             .then(values => {
-                setProfileData({ ...profileData, ...values });
+                // setProfileData({ ...profileData, ...values });
                 setIsEditing(false);
                 notification.success({
                     message: 'Profile updated successfully',
@@ -91,7 +88,7 @@ const ProfileDetails: React.FC<{ profileData: any; setProfileData: (data: any) =
                 },
             });
             console.log('Avatar upload response:', response.data);
-            setProfileData({ ...profileData, profilePicture: response.data.profilePicture });
+            // setProfileData({ ...profileData, profilePicture: response.data.profilePicture });
             notification.success({
                 message: 'Avatar uploaded successfully',
             });

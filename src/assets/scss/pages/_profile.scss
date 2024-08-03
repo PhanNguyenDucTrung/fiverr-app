@@ -1,120 +1,129 @@
 .profile-container {
     padding: 0 20px;
-}
 
-.profile-list {
-    margin-top: 30px;
-}
+    .ant-tabs-left > .ant-tabs-content-holder {
+        border-left: 1px solid #f0f0f0;
+    }
 
-.profile-listing-container {
-    display: grid;
-    width: 100%;
-    gap: 16px;
-    padding: 0 10px;
-}
-
-.profile-listing-container .ant-skeleton {
-    width: 100%;
-}
-
-.profile-listing-container {
-    .ant-skeleton {
+    .profile-list {
+        margin-top: 30px;
+        padding: 16px;
+        background: #fff;
         width: 100%;
-        .ant-skeleton-image {
+    }
+
+    .profile-listing-container {
+        display: grid;
+        width: 100%;
+        gap: 16px;
+        padding: 0 10px;
+        box-sizing: border-box; // Đảm bảo padding không ảnh hưởng đến chiều rộng
+
+        &.grid-view {
+            grid-template-columns: 1fr; // Mặc định là 1 cột trên các màn hình nhỏ hơn
+
+            @media (min-width: 576px) {
+                grid-template-columns: repeat(2, 1fr); // 2 cột trên màn hình trung bình
+            }
+
+            @media (min-width: 768px) {
+                grid-template-columns: repeat(3, 1fr); // 3 cột trên màn hình lớn hơn
+            }
+
+            @media (min-width: 992px) {
+                grid-template-columns: repeat(4, 1fr); // 4 cột trên màn hình rất lớn
+            }
+        }
+
+        .ant-skeleton {
+            width: 100%;
+
+            .ant-skeleton-image {
+                width: 100%;
+                height: 200px;
+                margin-bottom: 16px;
+            }
+        }
+
+        .job-item {
+            width: 100%;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .job-item img {
+            display: block;
             width: 100%;
             height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
             margin-bottom: 16px;
         }
+
+        .seller-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+
+            img {
+                border-radius: 50%;
+                height: 40px;
+                width: 40px;
+                margin: 0;
+            }
+
+            p {
+                margin: 0;
+            }
+        }
     }
-}
 
-.profile-listing-container.grid-view {
-    grid-template-columns: 1fr;
-}
+    .job-item__content {
+        color: #404145;
 
-@media (min-width: 576px) {
-    .profile-listing-container.grid-view {
-        grid-template-columns: repeat(2, 1fr);
+        h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin: 0 0 10px;
+        }
     }
-}
 
-@media (min-width: 992px) {
-    .profile-listing-container.grid-view {
-        grid-template-columns: repeat(4, 1fr);
+    .profile-avatar-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+        position: relative;
+
+        .avatar-wrapper {
+            position: relative;
+            display: inline-block;
+
+            .profile-avatar {
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                object-fit: cover;
+                display: block;
+            }
+
+            .edit-avatar-button {
+                position: absolute;
+                bottom: 10px;
+                right: 10px;
+                transform: translate(50%, 50%);
+            }
+        }
     }
-}
 
-.profile-listing-container .job-item {
-    width: 100%;
-    border-radius: 5px;
-    overflow: hidden;
-    position: relative;
-    cursor: pointer;
-}
-
-.profile-listing-container.grid-view .job-item img {
-    display: block;
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 5px;
-    margin-bottom: 16px;
-}
-
-.profile-listing-container .seller-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 16px;
-}
-
-.profile-listing-container.grid-view .seller-info img {
-    border-radius: 50%;
-    height: 40px;
-    width: 40px;
-    margin: 0;
-}
-
-.profile-listing-container .seller-info p {
-    margin: 0;
-}
-
-.job-item__content {
-    color: #404145;
-}
-
-.job-item__content h3 {
-    font-size: 18px;
-    margin-bottom: 10px;
-}
-
-.job-item__content p {
-    margin: 0 0 10px;
-}
-
-.profile-avatar-container {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-    position: relative;
-}
-
-.avatar-wrapper {
-    position: relative;
-    display: inline-block;
-}
-
-.profile-avatar {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-    display: block;
-}
-
-.edit-avatar-button {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    transform: translate(50%, 50%);
+    .ant-card {
+        margin-top: 16px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
 }
