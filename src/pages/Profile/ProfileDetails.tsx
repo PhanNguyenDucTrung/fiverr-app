@@ -37,7 +37,7 @@ const ProfileDetails: React.FC<{ profileData: any; loading: boolean }> = ({ prof
 
     const handleSaveProfile = () => {
         form.validateFields()
-            .then(values => {
+            .then(_values => {
                 // setProfileData({ ...profileData, ...values });
                 setIsEditing(false);
                 notification.success({
